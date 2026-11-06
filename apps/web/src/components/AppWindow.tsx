@@ -33,7 +33,6 @@ export default function AppWindow({
   const [closing, setClosing] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
-  const [minimizeMotion, setMinimizeMotion] = useState(false)
   const dragStart = useRef<DragStart>({
     x: 0,
     y: 0,
@@ -41,24 +40,15 @@ export default function AppWindow({
     posY: 0,
     rect: new DOMRect(),
   })
-  const isFirstMinimizedRender = useRef(true)
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
     return () => cancelAnimationFrame(id)
   }, [])
 
-  useEffect(() => {
-    if (isFirstMinimizedRender.current) {
-      isFirstMinimizedRender.current = false
-      return
-    }
-    setMinimizeMotion(true)
-  }, [minimized])
-
   function handleClose() {
     setClosing(true)
-    window.setTimeout(onClose, 320)
+    window.setTimeout(onClose, 650)
   }
 
   function handleMinimize() {
@@ -101,9 +91,7 @@ export default function AppWindow({
 
   const visible = entered && !closing && !minimized
   const transition =
-    minimizeMotion && !closing
-      ? 'transform 650ms cubic-bezier(0.4, 0, 0.2, 1), opacity 450ms ease-in-out'
-      : 'transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 260ms ease-out'
+    'transform 650ms cubic-bezier(0.4, 0, 0.2, 1), opacity 450ms ease-in-out'
 
   return (
     <div className='pointer-events-none fixed inset-0 z-[25] flex items-center justify-center px-6'>
