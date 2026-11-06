@@ -56,80 +56,80 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
   return (
     <section
       aria-label='프로젝트'
-      className='flex h-[min(600px,80vh)] w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)]'
+      className='flex h-[min(600px,80vh)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)]'
     >
-      {sidebarOpen && (
-        <nav className='flex w-36 shrink-0 flex-col gap-4 border-r border-black/5 bg-black/[0.03] px-3 pt-3 pb-4 sm:w-48'>
-          <SidebarGroup
-            label='지난 프로젝트'
-            items={PAST_GENERATIONS}
-            selected={selected}
-            onSelect={setSelected}
-          />
-          <SidebarGroup
-            label='현재 진행 중인 프로젝트'
-            items={CURRENT_PROJECTS}
-            selected={selected}
-            onSelect={setSelected}
-            overviewId={OVERVIEW_ID}
-          />
-        </nav>
-      )}
-
-      <div className='flex min-w-0 flex-1 flex-col'>
-        <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
-          <div className='flex gap-2'>
-            <button
-              type='button'
-              onClick={onClose}
-              aria-label='닫기'
-              className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
-            />
-            <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
-            <span className='h-3 w-3 rounded-full bg-[#28c840]' />
-          </div>
-
+      <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
+        <div className='flex gap-2'>
           <button
             type='button'
-            onClick={() => setSidebarOpen((v) => !v)}
-            className='rounded-md p-1 text-muted hover:bg-black/5'
-            aria-label='사이드바 토글'
-          >
-            <PanelLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
-          </button>
+            onClick={onClose}
+            aria-label='닫기'
+            className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
+          />
+          <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
+          <span className='h-3 w-3 rounded-full bg-[#28c840]' />
+        </div>
 
-          <div className='min-w-0 flex-1'>
-            <p className='truncate font-display text-sm font-semibold text-ink'>
-              {selectedSource.title || '프로젝트'}
-            </p>
-            <p className='truncate text-[11px] text-muted'>
-              ALOC 프로젝트 아카이브
-            </p>
-          </div>
+        <button
+          type='button'
+          onClick={() => setSidebarOpen((v) => !v)}
+          className='rounded-md p-1 text-muted hover:bg-black/5'
+          aria-label='사이드바 토글'
+        >
+          <PanelLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
+        </button>
 
-          <div className='flex items-center gap-0.5 rounded-md bg-black/5 p-0.5 text-muted'>
-            <List className='h-[15px] w-[15px] p-0.5' strokeWidth={2} />
-            <LayoutGrid
-              className='h-[15px] w-[15px] rounded bg-white p-0.5 text-ink shadow-sm'
-              strokeWidth={2}
-            />
-            <Columns3 className='h-[15px] w-[15px] p-0.5' strokeWidth={2} />
-            <GalleryHorizontalEnd
-              className='h-[15px] w-[15px] p-0.5'
-              strokeWidth={2}
-            />
-          </div>
+        <div className='min-w-0 flex-1'>
+          <p className='truncate font-display text-sm font-semibold text-ink'>
+            {selectedSource.title || '프로젝트'}
+          </p>
+          <p className='truncate text-[11px] text-muted'>
+            ALOC 프로젝트 아카이브
+          </p>
+        </div>
 
-          <div className='flex items-center gap-1.5 rounded-md bg-black/5 px-2 py-1 text-muted'>
-            <Search className='h-3.5 w-3.5' strokeWidth={2} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder='검색'
-              className='w-20 bg-transparent text-xs text-ink placeholder:text-muted focus:outline-none'
+        <div className='flex items-center gap-0.5 rounded-md bg-black/5 p-0.5 text-muted'>
+          <List className='h-[15px] w-[15px] p-0.5' strokeWidth={2} />
+          <LayoutGrid
+            className='h-[15px] w-[15px] rounded bg-white p-0.5 text-ink shadow-sm'
+            strokeWidth={2}
+          />
+          <Columns3 className='h-[15px] w-[15px] p-0.5' strokeWidth={2} />
+          <GalleryHorizontalEnd
+            className='h-[15px] w-[15px] p-0.5'
+            strokeWidth={2}
+          />
+        </div>
+
+        <div className='flex items-center gap-1.5 rounded-md bg-black/5 px-2 py-1 text-muted'>
+          <Search className='h-3.5 w-3.5' strokeWidth={2} />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder='검색'
+            className='w-20 bg-transparent text-xs text-ink placeholder:text-muted focus:outline-none'
+          />
+        </div>
+      </header>
+
+      <div className='flex min-h-0 flex-1'>
+        {sidebarOpen && (
+          <nav className='flex w-36 shrink-0 flex-col gap-4 overflow-y-auto border-r border-black/5 bg-black/[0.03] px-3 pt-3 pb-4 sm:w-48'>
+            <SidebarGroup
+              label='지난 프로젝트'
+              items={PAST_GENERATIONS}
+              selected={selected}
+              onSelect={setSelected}
             />
-          </div>
-        </header>
+            <SidebarGroup
+              label='현재 진행 중인 프로젝트'
+              items={CURRENT_PROJECTS}
+              selected={selected}
+              onSelect={setSelected}
+              overviewId={OVERVIEW_ID}
+            />
+          </nav>
+        )}
 
         <div className='flex-1 overflow-y-auto p-5'>
           {selectedSource.empty ? (
