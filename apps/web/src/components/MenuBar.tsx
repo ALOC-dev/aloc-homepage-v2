@@ -76,8 +76,17 @@ export default function MenuBar() {
   const percent = cohortProgress(now)
 
   return (
-    <header className='fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between bg-gradient-to-b from-black/30 via-black/10 to-transparent px-4 text-[15px] text-white backdrop-blur-md sm:px-5'>
-      <div className='flex items-center gap-2.5'>
+    <header className='fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between px-4 text-[15px] text-white sm:px-5'>
+      <div
+        className='pointer-events-none absolute inset-0 backdrop-blur-lg'
+        style={{
+          maskImage: 'linear-gradient(to bottom, black 55%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, black 55%, transparent 100%)',
+        }}
+      />
+
+      <div className='relative flex items-center gap-2.5'>
         <img
           src={alocLogo}
           alt=''
@@ -87,7 +96,7 @@ export default function MenuBar() {
         <span className='font-apple font-semibold'>ALOC</span>
       </div>
 
-      <div className='flex items-center gap-3 font-apple text-white/90 tabular-nums'>
+      <div className='relative flex items-center gap-3 font-apple text-white/90 tabular-nums'>
         <span className='flex items-center gap-1.5' title='6기 진행률'>
           {percent}%
           <BatteryIcon percent={percent} className='h-5 w-auto' />
