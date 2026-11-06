@@ -19,16 +19,21 @@ function cohortProgress(date: Date) {
   return Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)))
 }
 
-function BatteryIcon({ percent }: { percent: number }) {
+function BatteryIcon({
+  percent,
+  className,
+}: {
+  percent: number
+  className?: string
+}) {
   const fillWidth = Math.max(1, (percent / 100) * 15)
 
   return (
     <svg
-      width='22'
-      height='11'
       viewBox='0 0 22 11'
       fill='none'
       aria-hidden='true'
+      className={className}
     >
       <rect
         x='0.5'
@@ -71,12 +76,12 @@ export default function MenuBar() {
   const percent = cohortProgress(now)
 
   return (
-    <header className='fixed inset-x-0 top-0 z-30 flex h-10 items-center justify-between bg-gradient-to-b from-black/30 via-black/10 to-transparent px-3 text-[13px] text-white backdrop-blur-md sm:px-4'>
+    <header className='fixed inset-x-0 top-0 z-30 flex h-14 items-center justify-between bg-gradient-to-b from-black/30 via-black/10 to-transparent px-4 text-[15px] text-white backdrop-blur-md sm:px-5'>
       <div className='flex items-center gap-2.5'>
         <img
           src={alocLogo}
           alt=''
-          className='h-[18px] w-[18px] object-contain'
+          className='h-6 w-6 object-contain'
           draggable={false}
         />
         <span className='font-apple font-semibold'>ALOC</span>
@@ -85,7 +90,7 @@ export default function MenuBar() {
       <div className='flex items-center gap-3 font-apple text-white/90 tabular-nums'>
         <span className='flex items-center gap-1.5' title='6기 진행률'>
           {percent}%
-          <BatteryIcon percent={percent} />
+          <BatteryIcon percent={percent} className='h-5 w-auto' />
         </span>
         <span>{timeFormatter.format(now)}</span>
       </div>

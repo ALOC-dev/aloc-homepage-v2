@@ -30,7 +30,7 @@ export default function Home() {
 
       <MenuBar />
 
-      <main className='relative z-10 flex flex-1 items-center justify-center px-6 pt-10 pb-32'>
+      <main className='relative z-10 flex flex-1 items-center justify-center px-6 pt-14 pb-32'>
         <div className='flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
           <PhotoWindow />
           <NoticeAlert />
