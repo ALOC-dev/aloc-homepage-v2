@@ -1,3 +1,5 @@
+import { type PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
+
 type Photo = {
   id: string
   caption: string
@@ -38,12 +40,52 @@ const PHOTOS: Photo[] = [
 ]
 
 export default function PhotoWindow() {
+  const [pos, setPos] = useState({ x: 0, y: 0 })
+  const [dragging, setDragging] = useState(false)
+  const dragStart = useRef({ x: 0, y: 0, posX: 0, posY: 0 })
+
+  function handlePointerDown(e: ReactPointerEvent<HTMLElement>) {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      posX: pos.x,
+      posY: pos.y,
+    }
+    setDragging(true)
+  }
+
+  function handlePointerMove(e: ReactPointerEvent<HTMLElement>) {
+    if (!dragging) return
+    setPos({
+      x: dragStart.current.posX + (e.clientX - dragStart.current.x),
+      y: dragStart.current.posY + (e.clientY - dragStart.current.y),
+    })
+  }
+
+  function handlePointerUp(e: ReactPointerEvent<HTMLElement>) {
+    e.currentTarget.releasePointerCapture(e.pointerId)
+    setDragging(false)
+  }
+
   return (
     <section
       aria-label='사진'
       className='w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)]'
+      style={{
+        transform: `translate(${pos.x}px, ${pos.y}px)`,
+        transition: dragging ? 'none' : 'transform 200ms ease-out',
+        position: 'relative',
+        zIndex: dragging ? 20 : 'auto',
+      }}
     >
-      <header className='flex items-center gap-4 border-b border-black/5 px-4 py-3'>
+      <header
+        className='flex cursor-grab items-center gap-4 border-b border-black/5 px-4 py-3 select-none active:cursor-grabbing'
+        style={{ touchAction: 'none' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
         <div className='flex gap-2'>
           <span className='h-3 w-3 rounded-full bg-[#ff5f57]' />
           <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
