@@ -1,0 +1,66 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { DOCK_ITEMS } from '../dockItems'
+
+function scaleFor(distance: number | null) {
+  if (distance === null) return 1
+  if (distance === 0) return 1.5
+  if (distance === 1) return 1.2
+  if (distance === 2) return 1.05
+  return 1
+}
+
+export default function Dock() {
+  const [hovered, setHovered] = useState<number | null>(null)
+
+  return (
+    <nav
+      aria-label='주요 기능'
+      className='fixed bottom-4 left-1/2 flex -translate-x-1/2 items-end gap-1.5 rounded-3xl border border-white/40 bg-white/25 px-2.5 pt-2.5 pb-2 shadow-[0_20px_40px_-15px_rgba(28,27,41,0.45)] backdrop-blur-2xl sm:bottom-6 sm:gap-3 sm:px-4 sm:pt-3 sm:pb-2.5'
+      onMouseLeave={() => setHovered(null)}
+    >
+      {DOCK_ITEMS.map((item, index) => {
+        const distance = hovered === null ? null : Math.abs(hovered - index)
+        const scale = scaleFor(distance)
+        const isActive = distance === 0
+
+        return (
+          <Link
+            key={item.id}
+            to={item.to}
+            onMouseEnter={() => setHovered(index)}
+            onFocus={() => setHovered(index)}
+            onBlur={() => setHovered(null)}
+            className='group relative flex flex-col items-center focus:outline-none'
+            style={{
+              transform: `translateY(${isActive ? -14 : 0}px) scale(${scale})`,
+              transformOrigin: 'bottom center',
+              transition: 'transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+            }}
+          >
+            <span
+              role='tooltip'
+              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white opacity-0 shadow-lg transition-opacity duration-150 group-focus-visible:opacity-100 sm:-top-10'
+              style={{ opacity: isActive ? 1 : 0 }}
+            >
+              {item.label}
+            </span>
+            <span
+              className='flex h-10 w-10 items-center justify-center rounded-[11px] shadow-[0_6px_14px_-4px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:h-14 sm:w-14 sm:rounded-[14px]'
+              style={{
+                background: `linear-gradient(160deg, ${item.from}, ${item.to2})`,
+              }}
+            >
+              <item.Icon
+                className='h-5 w-5 text-white sm:h-7 sm:w-7'
+                strokeWidth={2}
+                aria-hidden='true'
+              />
+            </span>
+            <span className='sr-only'>{item.label}</span>
+          </Link>
+        )
+      })}
+    </nav>
+  )
+}
