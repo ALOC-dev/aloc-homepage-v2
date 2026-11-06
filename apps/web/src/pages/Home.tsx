@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ArchiveWindow from '../components/ArchiveWindow'
 import AppWindow from '../components/AppWindow'
 import Dock from '../components/Dock'
 import FinderWindow from '../components/FinderWindow'
@@ -57,19 +58,27 @@ export default function Home() {
           onClose={() => setOpenId(null)}
           minimized={minimized}
           onMinimize={() => setMinimized(true)}
-          widthClass={openItem.id === 'projects' ? 'max-w-4xl' : 'max-w-sm'}
+          widthClass={
+            openItem.id === 'projects' || openItem.id === 'archive'
+              ? 'max-w-4xl'
+              : 'max-w-sm'
+          }
         >
-          {(close, minimize) =>
-            openItem.id === 'projects' ? (
-              <FinderWindow onClose={close} onMinimize={minimize} />
-            ) : (
+          {(close, minimize) => {
+            if (openItem.id === 'projects') {
+              return <FinderWindow onClose={close} onMinimize={minimize} />
+            }
+            if (openItem.id === 'archive') {
+              return <ArchiveWindow onClose={close} onMinimize={minimize} />
+            }
+            return (
               <PlaceholderWindow
                 item={openItem}
                 onClose={close}
                 onMinimize={minimize}
               />
             )
-          }
+          }}
         </AppWindow>
       )}
 
