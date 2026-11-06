@@ -31,17 +31,25 @@ export default function Dock() {
             onMouseEnter={() => setHovered(index)}
             onFocus={() => setHovered(index)}
             onBlur={() => setHovered(null)}
-            className='group relative flex flex-col items-center focus:outline-none'
+            className='relative flex flex-col items-center focus:outline-none'
             style={{
-              transform: `translateY(${isActive ? -14 : 0}px) scale(${scale})`,
+              transform: `translateY(${isActive ? -16 : 0}px) scale(${scale})`,
               transformOrigin: 'bottom center',
-              transition: 'transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+              transition: 'transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+              willChange: 'transform',
             }}
           >
             <span
               role='tooltip'
-              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white opacity-0 shadow-lg transition-opacity duration-150 group-focus-visible:opacity-100 sm:-top-10'
-              style={{ opacity: isActive ? 1 : 0 }}
+              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg sm:-top-10'
+              style={{
+                opacity: isActive ? 1 : 0,
+                transform: isActive
+                  ? 'translateY(0) scale(1)'
+                  : 'translateY(4px) scale(0.85)',
+                transition: 'opacity 180ms ease-out, transform 180ms ease-out',
+                transitionDelay: isActive ? '60ms' : '0ms',
+              }}
             >
               {item.label}
             </span>
