@@ -7,11 +7,8 @@ import {
   Search,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { ALL_ARCHIVE_PEOPLE, ARCHIVE_GENERATIONS } from '../archiveData'
-import folderIcon from '../assets/dock-icons/folder.png'
+import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
 import { CURRENT_PROJECTS } from '../finderData'
-
-const OVERVIEW_ID = 'archive-overview'
 
 export default function ArchiveWindow({
   onClose,
@@ -20,52 +17,24 @@ export default function ArchiveWindow({
   onClose: () => void
   onMinimize: () => void
 }) {
-  const [selected, setSelected] = useState<string>(OVERVIEW_ID)
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string>(
+    ALL_ARCHIVE_PEOPLE[0]?.id ?? '',
+  )
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
   const [query, setQuery] = useState('')
 
-  function handleSelectCategory(id: string) {
-    setSelected(id)
-    setSelectedEntryId(null)
-  }
-
-  const selectedSource = useMemo<ArchiveSelection>(() => {
-    if (selected === OVERVIEW_ID) {
-      return {
-        title: '전체 아카이브',
-        entries: ALL_ARCHIVE_PEOPLE,
-        openable: true,
-      }
-    }
-    const gen = ARCHIVE_GENERATIONS.find((g) => g.id === selected)
-    if (gen) {
-      return {
-        title: gen.label,
-        entries: gen.people,
-        empty: gen.people.length === 0,
-        openable: true,
-      }
-    }
+  const selectedTitle = useMemo(() => {
     const person = ALL_ARCHIVE_PEOPLE.find((p) => p.id === selected)
-    if (person) {
-      return {
-        title: person.label,
-        entries: [],
-        empty: true,
-      }
-    }
+    if (person) return person.label
     const team = CURRENT_PROJECTS.find((p) => p.id === selected)
-    if (team) {
-      return { title: team.label, entries: [], empty: true }
-    }
-    return { title: '', entries: [] }
+    if (team) return team.label
+    return ''
   }, [selected])
 
-  const visibleEntries = selectedSource.entries.filter((f) =>
-    f.label.toLowerCase().includes(query.trim().toLowerCase()),
+  const filteredPeople = ALL_ARCHIVE_PEOPLE.filter((p) =>
+    p.label.toLowerCase().includes(query.trim().toLowerCase()),
   )
 
   return (
@@ -104,7 +73,7 @@ export default function ArchiveWindow({
           className='min-w-0 flex-1 cursor-grab touch-none py-1 select-none active:cursor-grabbing'
         >
           <p className='truncate font-display text-sm font-semibold text-ink'>
-            {selectedSource.title || '아카이브'}
+            {selectedTitle || '아카이브'}
           </p>
           <p className='truncate text-[11px] text-muted'>ALOC 멤버 아카이브</p>
         </div>
@@ -138,80 +107,27 @@ export default function ArchiveWindow({
           <nav className='flex w-36 shrink-0 flex-col gap-4 overflow-y-auto border-r border-black/5 bg-black/[0.03] px-3 pt-3 pb-4 sm:w-48'>
             <SidebarGroup
               label='지난 프로젝트'
-              items={ARCHIVE_GENERATIONS}
+              items={filteredPeople}
               selected={selected}
-              onSelect={handleSelectCategory}
-              overviewId={OVERVIEW_ID}
+              onSelect={setSelected}
             />
             <SidebarGroup
               label='현재 진행 중인 프로젝트'
               items={CURRENT_PROJECTS}
               selected={selected}
-              onSelect={handleSelectCategory}
+              onSelect={setSelected}
             />
           </nav>
         )}
 
-        <div
-          className='flex-1 overflow-y-auto p-5'
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedEntryId(null)
-          }}
-        >
-          {selectedSource.empty ? (
-            <p className='text-sm text-muted'>
-              아직 기록이 없어요. 자료를 보내주시면 채울게요.
-            </p>
-          ) : (
-            <div className='grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-x-2 gap-y-5'>
-              {visibleEntries.map((entry) => {
-                const isSelected = selectedEntryId === entry.id
-
-                return (
-                  <div
-                    key={entry.id}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setSelectedEntryId(entry.id)
-                    }}
-                    onDoubleClick={
-                      selectedSource.openable
-                        ? () => handleSelectCategory(entry.id)
-                        : undefined
-                    }
-                    className={`flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center ${
-                      selectedSource.openable ? 'cursor-pointer' : ''
-                    }`}
-                  >
-                    <img
-                      src={folderIcon}
-                      alt=''
-                      className='h-14 w-14 object-contain'
-                      draggable={false}
-                    />
-                    <p
-                      className={`line-clamp-2 rounded px-1.5 py-0.5 text-xs ${
-                        isSelected ? 'bg-[#0A84FF] text-white' : 'text-ink'
-                      }`}
-                    >
-                      {entry.label}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-          )}
+        <div className='flex-1 overflow-y-auto p-5'>
+          <p className='text-sm text-muted'>
+            아직 기록이 없어요. 자료를 보내주시면 채울게요.
+          </p>
         </div>
       </div>
     </section>
   )
-}
-
-type ArchiveSelection = {
-  title: string
-  entries: { id: string; label: string }[]
-  empty?: boolean
-  openable?: boolean
 }
 
 function SidebarGroup({
@@ -219,25 +135,16 @@ function SidebarGroup({
   items,
   selected,
   onSelect,
-  overviewId,
 }: {
   label: string
   items: { id: string; label: string }[]
   selected: string
   onSelect: (id: string) => void
-  overviewId?: string
 }) {
   return (
     <div>
       <p className='px-2 text-[11px] font-medium text-muted'>{label}</p>
       <ul className='mt-1 flex flex-col gap-0.5'>
-        {overviewId && (
-          <SidebarRow
-            label='전체'
-            active={selected === overviewId}
-            onClick={() => onSelect(overviewId)}
-          />
-        )}
         {items.map((item) => (
           <SidebarRow
             key={item.id}
