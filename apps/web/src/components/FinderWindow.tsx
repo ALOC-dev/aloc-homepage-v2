@@ -33,10 +33,16 @@ function FileIcon({ className }: { className?: string }) {
 
 export default function FinderWindow({ onClose }: { onClose: () => void }) {
   const [selected, setSelected] = useState<string>(OVERVIEW_ID)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
   const [query, setQuery] = useState('')
+
+  function handleSelectCategory(id: string) {
+    setSelected(id)
+    setSelectedEntryId(null)
+  }
 
   const selectedSource = useMemo<SidebarSelection>(() => {
     if (selected === OVERVIEW_ID) {
@@ -142,19 +148,24 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
               label='지난 프로젝트'
               items={PAST_GENERATIONS}
               selected={selected}
-              onSelect={setSelected}
+              onSelect={handleSelectCategory}
             />
             <SidebarGroup
               label='현재 진행 중인 프로젝트'
               items={CURRENT_PROJECTS}
               selected={selected}
-              onSelect={setSelected}
+              onSelect={handleSelectCategory}
               overviewId={OVERVIEW_ID}
             />
           </nav>
         )}
 
-        <div className='flex-1 overflow-y-auto p-5'>
+        <div
+          className='flex-1 overflow-y-auto p-5'
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedEntryId(null)
+          }}
+        >
           {selectedSource.empty ? (
             <p className='text-sm text-muted'>
               아직 기록이 없어요. 곧 채워질 예정이에요.
@@ -164,14 +175,21 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
               {visibleEntries.map((entry) => {
                 const isOpenable =
                   selected === OVERVIEW_ID && selectedSource.kind === 'folders'
+                const isSelected = selectedEntryId === entry.id
 
                 return (
                   <div
                     key={entry.id}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setSelectedEntryId(entry.id)
+                    }}
                     onDoubleClick={
-                      isOpenable ? () => setSelected(entry.id) : undefined
+                      isOpenable
+                        ? () => handleSelectCategory(entry.id)
+                        : undefined
                     }
-                    className={`flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center hover:bg-black/5 ${isOpenable ? 'cursor-pointer' : ''}`}
+                    className={`flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center ${isOpenable ? 'cursor-pointer' : ''}`}
                   >
                     {selectedSource.kind === 'files' ? (
                       <FileIcon className='h-14 w-14 drop-shadow-sm' />
@@ -183,7 +201,13 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
                         draggable={false}
                       />
                     )}
-                    <p className='line-clamp-2 text-xs text-ink'>
+                    <p
+                      className={`line-clamp-2 rounded text-xs ${
+                        isSelected
+                          ? 'bg-[#0A84FF] px-1.5 py-0.5 text-white'
+                          : 'text-ink'
+                      }`}
+                    >
                       {entry.label}
                     </p>
                   </div>
