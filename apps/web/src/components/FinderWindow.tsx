@@ -161,24 +161,34 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
             </p>
           ) : (
             <div className='grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-x-2 gap-y-5'>
-              {visibleEntries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className='flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center hover:bg-black/5'
-                >
-                  {selectedSource.kind === 'files' ? (
-                    <FileIcon className='h-14 w-14 drop-shadow-sm' />
-                  ) : (
-                    <img
-                      src={folderIcon}
-                      alt=''
-                      className='h-14 w-14 object-contain'
-                      draggable={false}
-                    />
-                  )}
-                  <p className='line-clamp-2 text-xs text-ink'>{entry.label}</p>
-                </div>
-              ))}
+              {visibleEntries.map((entry) => {
+                const isOpenable =
+                  selected === OVERVIEW_ID && selectedSource.kind === 'folders'
+
+                return (
+                  <div
+                    key={entry.id}
+                    onDoubleClick={
+                      isOpenable ? () => setSelected(entry.id) : undefined
+                    }
+                    className={`flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center hover:bg-black/5 ${isOpenable ? 'cursor-pointer' : ''}`}
+                  >
+                    {selectedSource.kind === 'files' ? (
+                      <FileIcon className='h-14 w-14 drop-shadow-sm' />
+                    ) : (
+                      <img
+                        src={folderIcon}
+                        alt=''
+                        className='h-14 w-14 object-contain'
+                        draggable={false}
+                      />
+                    )}
+                    <p className='line-clamp-2 text-xs text-ink'>
+                      {entry.label}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
