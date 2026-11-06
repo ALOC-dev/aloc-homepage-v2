@@ -1,4 +1,5 @@
 import type { DockItem } from '../dockItems'
+import TrafficLights from './TrafficLights'
 
 export default function PlaceholderWindow({
   item,
@@ -21,23 +22,10 @@ export default function PlaceholderWindow({
       }`}
     >
       <header className='flex items-center gap-2 border-b border-black/5 px-4 py-3'>
-        <button
-          type='button'
-          onClick={onClose}
-          aria-label='닫기'
-          className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
-        />
-        <button
-          type='button'
-          onClick={onMinimize}
-          aria-label='최소화'
-          className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
-        />
-        <button
-          type='button'
-          onClick={onToggleMaximize}
-          aria-label='확장'
-          className='h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80'
+        <TrafficLights
+          onClose={onClose}
+          onMinimize={onMinimize}
+          onToggleMaximize={onToggleMaximize}
         />
         <p
           data-drag-handle

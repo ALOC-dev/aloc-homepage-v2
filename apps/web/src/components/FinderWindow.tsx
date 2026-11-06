@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react'
 import folderIcon from '../assets/dock-icons/folder.png'
 import giutInterimThumb from '../assets/presentation-thumbs/giut-interim.png'
 import { CURRENT_PROJECTS, PAST_GENERATIONS } from '../finderData'
+import TrafficLights from './TrafficLights'
 
 const OVERVIEW_ID = 'current-overview'
 
@@ -108,26 +109,11 @@ export default function FinderWindow({
       }`}
     >
       <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
-        <div className='flex gap-2'>
-          <button
-            type='button'
-            onClick={onClose}
-            aria-label='닫기'
-            className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
-          />
-          <button
-            type='button'
-            onClick={onMinimize}
-            aria-label='최소화'
-            className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
-          />
-          <button
-            type='button'
-            onClick={onToggleMaximize}
-            aria-label='확장'
-            className='h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80'
-          />
-        </div>
+        <TrafficLights
+          onClose={onClose}
+          onMinimize={onMinimize}
+          onToggleMaximize={onToggleMaximize}
+        />
 
         <button
           type='button'

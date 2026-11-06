@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
+import TrafficLights from './TrafficLights'
 
 export default function ArchiveWindow({
   onClose,
@@ -47,26 +48,11 @@ export default function ArchiveWindow({
       }`}
     >
       <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
-        <div className='flex gap-2'>
-          <button
-            type='button'
-            onClick={onClose}
-            aria-label='닫기'
-            className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
-          />
-          <button
-            type='button'
-            onClick={onMinimize}
-            aria-label='최소화'
-            className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
-          />
-          <button
-            type='button'
-            onClick={onToggleMaximize}
-            aria-label='확장'
-            className='h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80'
-          />
-        </div>
+        <TrafficLights
+          onClose={onClose}
+          onMinimize={onMinimize}
+          onToggleMaximize={onToggleMaximize}
+        />
 
         <button
           type='button'
