@@ -8,13 +8,28 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import folderIcon from '../assets/dock-icons/folder.png'
-import {
-  CURRENT_PROJECTS,
-  PAST_GENERATIONS,
-  type ProjectFolder,
-} from '../finderData'
+import { CURRENT_PROJECTS, PAST_GENERATIONS } from '../finderData'
 
 const OVERVIEW_ID = 'current-overview'
+
+function FileIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox='0 0 64 64' className={className}>
+      <path
+        d='M14 4h26l10 10v46a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'
+        fill='#fff'
+        stroke='#d8d8dc'
+        strokeWidth='1.5'
+      />
+      <path
+        d='M40 4v8a2 2 0 0 0 2 2h8z'
+        fill='#ececef'
+        stroke='#d8d8dc'
+        strokeWidth='1.5'
+      />
+    </svg>
+  )
+}
 
 export default function FinderWindow({ onClose }: { onClose: () => void }) {
   const [selected, setSelected] = useState<string>(OVERVIEW_ID)
@@ -27,29 +42,34 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
     if (selected === OVERVIEW_ID) {
       return {
         title: '현재 진행 중인 프로젝트',
-        folders: CURRENT_PROJECTS.map((p) => ({ id: p.id, label: p.label })),
+        kind: 'folders',
+        entries: CURRENT_PROJECTS.map((p) => ({ id: p.id, label: p.label })),
       }
     }
     const current = CURRENT_PROJECTS.find((p) => p.id === selected)
     if (current) {
       return {
         title: current.label,
-        folders: current.folders,
-        empty: current.folders.length === 0,
+        kind: 'files',
+        entries: [
+          { id: `${current.id}-interim`, label: `${current.label}_중간발표` },
+          { id: `${current.id}-final`, label: `${current.label}_최종발표` },
+        ],
       }
     }
     const past = PAST_GENERATIONS.find((p) => p.id === selected)
     if (past) {
       return {
         title: past.label,
-        folders: past.folders,
+        kind: 'folders',
+        entries: past.folders,
         empty: past.folders.length === 0,
       }
     }
-    return { title: '', folders: [] }
+    return { title: '', kind: 'folders', entries: [] }
   }, [selected])
 
-  const visibleFolders = selectedSource.folders.filter((f) =>
+  const visibleEntries = selectedSource.entries.filter((f) =>
     f.label.toLowerCase().includes(query.trim().toLowerCase()),
   )
 
@@ -79,7 +99,10 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
           <PanelLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
         </button>
 
-        <div className='min-w-0 flex-1'>
+        <div
+          data-drag-handle
+          className='min-w-0 flex-1 cursor-grab touch-none py-1 select-none active:cursor-grabbing'
+        >
           <p className='truncate font-display text-sm font-semibold text-ink'>
             {selectedSource.title || '프로젝트'}
           </p>
@@ -138,20 +161,22 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
             </p>
           ) : (
             <div className='grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-x-2 gap-y-5'>
-              {visibleFolders.map((folder) => (
+              {visibleEntries.map((entry) => (
                 <div
-                  key={folder.id}
+                  key={entry.id}
                   className='flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center hover:bg-black/5'
                 >
-                  <img
-                    src={folderIcon}
-                    alt=''
-                    className='h-14 w-14 object-contain'
-                    draggable={false}
-                  />
-                  <p className='line-clamp-2 text-xs text-ink'>
-                    {folder.label}
-                  </p>
+                  {selectedSource.kind === 'files' ? (
+                    <FileIcon className='h-14 w-14 drop-shadow-sm' />
+                  ) : (
+                    <img
+                      src={folderIcon}
+                      alt=''
+                      className='h-14 w-14 object-contain'
+                      draggable={false}
+                    />
+                  )}
+                  <p className='line-clamp-2 text-xs text-ink'>{entry.label}</p>
                 </div>
               ))}
             </div>
@@ -164,7 +189,8 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
 
 type SidebarSelection = {
   title: string
-  folders: ProjectFolder[]
+  kind: 'folders' | 'files'
+  entries: { id: string; label: string }[]
   empty?: boolean
 }
 
@@ -220,7 +246,7 @@ function SidebarRow({
         type='button'
         onClick={onClick}
         className={`w-full rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
-          active ? 'bg-accent text-white' : 'text-ink hover:bg-black/5'
+          active ? 'bg-[#0A84FF] text-white' : 'text-ink hover:bg-black/5'
         }`}
       >
         {label}
