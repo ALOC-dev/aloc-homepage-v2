@@ -8,7 +8,6 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
-import { CURRENT_PROJECTS } from '../finderData'
 
 export default function ArchiveWindow({
   onClose,
@@ -27,10 +26,7 @@ export default function ArchiveWindow({
 
   const selectedTitle = useMemo(() => {
     const person = ALL_ARCHIVE_PEOPLE.find((p) => p.id === selected)
-    if (person) return person.label
-    const team = CURRENT_PROJECTS.find((p) => p.id === selected)
-    if (team) return team.label
-    return ''
+    return person?.label ?? ''
   }, [selected])
 
   const filteredPeople = ALL_ARCHIVE_PEOPLE.filter((p) =>
@@ -108,12 +104,6 @@ export default function ArchiveWindow({
             <SidebarGroup
               label='지난 프로젝트'
               items={filteredPeople}
-              selected={selected}
-              onSelect={setSelected}
-            />
-            <SidebarGroup
-              label='현재 진행 중인 프로젝트'
-              items={CURRENT_PROJECTS}
               selected={selected}
               onSelect={setSelected}
             />
