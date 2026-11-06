@@ -84,7 +84,7 @@ export default function Dock({
             >
               {minimizedItem.label}
             </span>
-            <span className='relative flex h-10 w-10 items-center justify-center rounded-md bg-white p-1 opacity-80 shadow-[0_6px_10px_-2px_rgba(0,0,0,0.3)] sm:h-14 sm:w-14'>
+            <span className='relative flex h-10 w-10 items-center justify-center opacity-80 drop-shadow-[0_6px_10px_rgba(0,0,0,0.3)] sm:h-14 sm:w-14'>
               <img
                 src={minimizedItem.icon}
                 alt=''
