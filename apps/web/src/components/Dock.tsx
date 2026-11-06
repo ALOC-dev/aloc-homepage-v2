@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { DOCK_ITEMS } from '../dockItems'
 
 function scaleFor(distance: number | null) {
   return distance === 0 ? 1.5 : 1
 }
 
-export default function Dock() {
+export default function Dock({ onSelect }: { onSelect: (id: string) => void }) {
   const [hovered, setHovered] = useState<number | null>(null)
 
   return (
@@ -21,13 +20,14 @@ export default function Dock() {
         const isActive = distance === 0
 
         return (
-          <Link
+          <button
             key={item.id}
-            to={item.to}
+            type='button'
+            onClick={() => onSelect(item.id)}
             onMouseEnter={() => setHovered(index)}
             onFocus={() => setHovered(index)}
             onBlur={() => setHovered(null)}
-            className='relative flex flex-col items-center focus:outline-none'
+            className='relative flex flex-col items-center border-0 bg-transparent p-0 focus:outline-none'
             style={{
               transform: `translateY(${isActive ? -16 : 0}px) scale(${scale})`,
               transformOrigin: 'bottom center',
@@ -58,7 +58,7 @@ export default function Dock() {
               />
             </span>
             <span className='sr-only'>{item.label}</span>
-          </Link>
+          </button>
         )
       })}
     </nav>

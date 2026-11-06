@@ -16,7 +16,7 @@ import {
 
 const OVERVIEW_ID = 'current-overview'
 
-export default function FinderWindow() {
+export default function FinderWindow({ onClose }: { onClose: () => void }) {
   const [selected, setSelected] = useState<string>(OVERVIEW_ID)
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
@@ -60,12 +60,6 @@ export default function FinderWindow() {
     >
       {sidebarOpen && (
         <nav className='flex w-36 shrink-0 flex-col gap-4 border-r border-black/5 bg-black/[0.03] px-3 pt-3 pb-4 sm:w-48'>
-          <div className='flex gap-2 px-1'>
-            <span className='h-3 w-3 rounded-full bg-[#ff5f57]' />
-            <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
-            <span className='h-3 w-3 rounded-full bg-[#28c840]' />
-          </div>
-
           <SidebarGroup
             label='지난 프로젝트'
             items={PAST_GENERATIONS}
@@ -84,6 +78,17 @@ export default function FinderWindow() {
 
       <div className='flex min-w-0 flex-1 flex-col'>
         <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
+          <div className='flex gap-2'>
+            <button
+              type='button'
+              onClick={onClose}
+              aria-label='닫기'
+              className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
+            />
+            <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
+            <span className='h-3 w-3 rounded-full bg-[#28c840]' />
+          </div>
+
           <button
             type='button'
             onClick={() => setSidebarOpen((v) => !v)}

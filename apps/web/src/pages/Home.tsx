@@ -1,9 +1,17 @@
+import { useState } from 'react'
+import AppWindow from '../components/AppWindow'
 import Dock from '../components/Dock'
+import FinderWindow from '../components/FinderWindow'
 import MenuBar from '../components/MenuBar'
 import NoticeAlert from '../components/NoticeAlert'
 import PhotoWindow from '../components/PhotoWindow'
+import PlaceholderWindow from '../components/PlaceholderWindow'
+import { DOCK_ITEMS } from '../dockItems'
 
 export default function Home() {
+  const [openId, setOpenId] = useState<string | null>(null)
+  const openItem = DOCK_ITEMS.find((item) => item.id === openId)
+
   return (
     <div className='relative flex min-h-svh flex-col overflow-hidden bg-canvas-deep'>
       <div
@@ -37,7 +45,23 @@ export default function Home() {
         </div>
       </main>
 
-      <Dock />
+      {openItem && (
+        <AppWindow
+          key={openItem.id}
+          onClose={() => setOpenId(null)}
+          widthClass={openItem.id === 'projects' ? 'max-w-4xl' : 'max-w-sm'}
+        >
+          {(close) =>
+            openItem.id === 'projects' ? (
+              <FinderWindow onClose={close} />
+            ) : (
+              <PlaceholderWindow item={openItem} onClose={close} />
+            )
+          }
+        </AppWindow>
+      )}
+
+      <Dock onSelect={setOpenId} />
     </div>
   )
 }
