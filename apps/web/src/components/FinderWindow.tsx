@@ -8,9 +8,18 @@ import {
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import folderIcon from '../assets/dock-icons/folder.png'
+import giutInterimThumb from '../assets/presentation-thumbs/giut-interim.png'
 import { CURRENT_PROJECTS, PAST_GENERATIONS } from '../finderData'
 
 const OVERVIEW_ID = 'current-overview'
+
+const PRESENTATION_ASSETS: Record<string, { thumbnail: string; href: string }> =
+  {
+    'giut-interim': {
+      thumbnail: giutInterimThumb,
+      href: '/presentations/giut-interim.pdf',
+    },
+  }
 
 function FileIcon({ className }: { className?: string }) {
   return (
@@ -173,9 +182,26 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
           ) : (
             <div className='grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-x-2 gap-y-5'>
               {visibleEntries.map((entry) => {
-                const isOpenable =
+                const isFolderOpenable =
                   selected === OVERVIEW_ID && selectedSource.kind === 'folders'
+                const presentation =
+                  selectedSource.kind === 'files'
+                    ? PRESENTATION_ASSETS[entry.id]
+                    : undefined
+                const isOpenable = isFolderOpenable || Boolean(presentation)
                 const isSelected = selectedEntryId === entry.id
+
+                function handleOpen() {
+                  if (isFolderOpenable) {
+                    handleSelectCategory(entry.id)
+                  } else if (presentation) {
+                    const link = document.createElement('a')
+                    link.href = presentation.href
+                    link.target = '_blank'
+                    link.rel = 'noopener'
+                    link.click()
+                  }
+                }
 
                 return (
                   <div
@@ -184,14 +210,17 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
                       e.stopPropagation()
                       setSelectedEntryId(entry.id)
                     }}
-                    onDoubleClick={
-                      isOpenable
-                        ? () => handleSelectCategory(entry.id)
-                        : undefined
-                    }
+                    onDoubleClick={isOpenable ? handleOpen : undefined}
                     className={`flex flex-col items-center gap-1.5 rounded-lg px-2 py-2 text-center ${isOpenable ? 'cursor-pointer' : ''}`}
                   >
-                    {selectedSource.kind === 'files' ? (
+                    {presentation ? (
+                      <img
+                        src={presentation.thumbnail}
+                        alt=''
+                        className='h-14 w-20 rounded-sm border border-black/10 object-cover shadow-sm'
+                        draggable={false}
+                      />
+                    ) : selectedSource.kind === 'files' ? (
                       <FileIcon className='h-14 w-14 drop-shadow-sm' />
                     ) : (
                       <img
@@ -202,10 +231,8 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
                       />
                     )}
                     <p
-                      className={`line-clamp-2 rounded text-xs ${
-                        isSelected
-                          ? 'bg-[#0A84FF] px-1.5 py-0.5 text-white'
-                          : 'text-ink'
+                      className={`line-clamp-2 rounded px-1.5 py-0.5 text-xs ${
+                        isSelected ? 'bg-[#0A84FF] text-white' : 'text-ink'
                       }`}
                     >
                       {entry.label}
