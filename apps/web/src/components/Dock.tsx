@@ -3,11 +3,7 @@ import { Link } from 'react-router-dom'
 import { DOCK_ITEMS } from '../dockItems'
 
 function scaleFor(distance: number | null) {
-  if (distance === null) return 1
-  if (distance === 0) return 1.5
-  if (distance === 1) return 1.2
-  if (distance === 2) return 1.05
-  return 1
+  return distance === 0 ? 1.5 : 1
 }
 
 export default function Dock() {
