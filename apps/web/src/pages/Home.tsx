@@ -10,7 +10,13 @@ import { DOCK_ITEMS } from '../dockItems'
 
 export default function Home() {
   const [openId, setOpenId] = useState<string | null>(null)
+  const [minimized, setMinimized] = useState(false)
   const openItem = DOCK_ITEMS.find((item) => item.id === openId)
+
+  function handleSelect(id: string) {
+    setOpenId(id)
+    setMinimized(false)
+  }
 
   return (
     <div className='relative flex min-h-svh flex-col overflow-hidden bg-canvas-deep'>
@@ -49,19 +55,29 @@ export default function Home() {
         <AppWindow
           key={openItem.id}
           onClose={() => setOpenId(null)}
+          minimized={minimized}
+          onMinimize={() => setMinimized(true)}
           widthClass={openItem.id === 'projects' ? 'max-w-4xl' : 'max-w-sm'}
         >
-          {(close) =>
+          {(close, minimize) =>
             openItem.id === 'projects' ? (
-              <FinderWindow onClose={close} />
+              <FinderWindow onClose={close} onMinimize={minimize} />
             ) : (
-              <PlaceholderWindow item={openItem} onClose={close} />
+              <PlaceholderWindow
+                item={openItem}
+                onClose={close}
+                onMinimize={minimize}
+              />
             )
           }
         </AppWindow>
       )}
 
-      <Dock onSelect={setOpenId} />
+      <Dock
+        onSelect={handleSelect}
+        minimizedItem={minimized ? openItem : undefined}
+        onRestore={() => setMinimized(false)}
+      />
     </div>
   )
 }

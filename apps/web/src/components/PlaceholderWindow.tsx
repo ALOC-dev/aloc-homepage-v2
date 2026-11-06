@@ -3,9 +3,11 @@ import type { DockItem } from '../dockItems'
 export default function PlaceholderWindow({
   item,
   onClose,
+  onMinimize,
 }: {
   item: DockItem
   onClose: () => void
+  onMinimize: () => void
 }) {
   return (
     <section
@@ -19,7 +21,12 @@ export default function PlaceholderWindow({
           aria-label='닫기'
           className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
         />
-        <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
+        <button
+          type='button'
+          onClick={onMinimize}
+          aria-label='최소화'
+          className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
+        />
         <span className='h-3 w-3 rounded-full bg-[#28c840]' />
         <p
           data-drag-handle

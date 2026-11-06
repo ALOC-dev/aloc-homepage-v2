@@ -1,11 +1,19 @@
 import { useState } from 'react'
-import { DOCK_ITEMS } from '../dockItems'
+import { DOCK_ITEMS, type DockItem } from '../dockItems'
 
 function scaleFor(distance: number | null) {
   return distance === 0 ? 1.5 : 1
 }
 
-export default function Dock({ onSelect }: { onSelect: (id: string) => void }) {
+export default function Dock({
+  onSelect,
+  minimizedItem,
+  onRestore,
+}: {
+  onSelect: (id: string) => void
+  minimizedItem?: DockItem
+  onRestore?: () => void
+}) {
   const [hovered, setHovered] = useState<number | null>(null)
 
   return (
@@ -61,6 +69,34 @@ export default function Dock({ onSelect }: { onSelect: (id: string) => void }) {
           </button>
         )
       })}
+
+      {minimizedItem && (
+        <>
+          <span className='mx-0.5 mb-1.5 h-10 w-px self-stretch bg-white/40 sm:h-14' />
+          <button
+            type='button'
+            onClick={onRestore}
+            className='relative flex flex-col items-center border-0 bg-transparent p-0 transition-transform duration-150 hover:-translate-y-1 focus:outline-none'
+          >
+            <span
+              role='tooltip'
+              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white opacity-0 shadow-lg transition-opacity duration-150 hover:opacity-100 sm:-top-10'
+            >
+              {minimizedItem.label}
+            </span>
+            <span className='relative flex h-10 w-10 items-center justify-center rounded-md bg-white p-1 opacity-80 shadow-[0_6px_10px_-2px_rgba(0,0,0,0.3)] sm:h-14 sm:w-14'>
+              <img
+                src={minimizedItem.icon}
+                alt=''
+                className='h-full w-full object-contain'
+                draggable={false}
+              />
+              <span className='absolute -bottom-1 h-1 w-1 rounded-full bg-ink/60' />
+            </span>
+            <span className='sr-only'>{minimizedItem.label} 복원</span>
+          </button>
+        </>
+      )}
     </nav>
   )
 }

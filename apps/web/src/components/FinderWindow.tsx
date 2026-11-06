@@ -40,7 +40,13 @@ function FileIcon({ className }: { className?: string }) {
   )
 }
 
-export default function FinderWindow({ onClose }: { onClose: () => void }) {
+export default function FinderWindow({
+  onClose,
+  onMinimize,
+}: {
+  onClose: () => void
+  onMinimize: () => void
+}) {
   const [selected, setSelected] = useState<string>(OVERVIEW_ID)
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(
@@ -101,7 +107,12 @@ export default function FinderWindow({ onClose }: { onClose: () => void }) {
             aria-label='닫기'
             className='h-3 w-3 rounded-full bg-[#ff5f57] transition-opacity hover:opacity-80'
           />
-          <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
+          <button
+            type='button'
+            onClick={onMinimize}
+            aria-label='최소화'
+            className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
+          />
           <span className='h-3 w-3 rounded-full bg-[#28c840]' />
         </div>
 

@@ -18,12 +18,16 @@ type DragStart = {
 
 export default function AppWindow({
   onClose,
+  minimized = false,
+  onMinimize,
   widthClass = 'max-w-4xl',
   children,
 }: {
   onClose: () => void
+  minimized?: boolean
+  onMinimize?: () => void
   widthClass?: string
-  children: (close: () => void) => ReactNode
+  children: (close: () => void, minimize: () => void) => ReactNode
 }) {
   const [entered, setEntered] = useState(false)
   const [closing, setClosing] = useState(false)
@@ -45,6 +49,10 @@ export default function AppWindow({
   function handleClose() {
     setClosing(true)
     window.setTimeout(onClose, 320)
+  }
+
+  function handleMinimize() {
+    onMinimize?.()
   }
 
   function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
@@ -81,13 +89,14 @@ export default function AppWindow({
     setDragging(false)
   }
 
-  const visible = entered && !closing
+  const visible = entered && !closing && !minimized
 
   return (
     <div className='pointer-events-none fixed inset-0 z-[25] flex items-center justify-center px-6'>
       <div
-        className={`pointer-events-auto w-full ${widthClass}`}
+        className={`w-full ${widthClass}`}
         style={{
+          pointerEvents: visible ? 'auto' : 'none',
           transform: visible
             ? 'translateY(0) scale(1)'
             : 'translateY(220px) scale(0.25)',
@@ -106,7 +115,7 @@ export default function AppWindow({
             transition: dragging ? 'none' : 'transform 200ms ease-out',
           }}
         >
-          {children(handleClose)}
+          {children(handleClose, handleMinimize)}
         </div>
       </div>
     </div>
