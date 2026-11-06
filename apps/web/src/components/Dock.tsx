@@ -45,16 +45,12 @@ export default function Dock() {
             >
               {item.label}
             </span>
-            <span
-              className='flex h-10 w-10 items-center justify-center rounded-[11px] shadow-[0_6px_14px_-4px_rgba(0,0,0,0.35)] ring-1 ring-black/5 sm:h-14 sm:w-14 sm:rounded-[14px]'
-              style={{
-                background: `linear-gradient(160deg, ${item.from}, ${item.to2})`,
-              }}
-            >
-              <item.Icon
-                className='h-5 w-5 text-white sm:h-7 sm:w-7'
-                strokeWidth={2}
-                aria-hidden='true'
+            <span className='flex h-10 w-10 items-center justify-center drop-shadow-[0_6px_10px_rgba(0,0,0,0.3)] sm:h-14 sm:w-14'>
+              <img
+                src={item.icon}
+                alt=''
+                className='h-full w-full object-contain'
+                draggable={false}
               />
             </span>
             <span className='sr-only'>{item.label}</span>

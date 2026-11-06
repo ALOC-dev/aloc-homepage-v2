@@ -15,13 +15,13 @@ export default function ComingSoon({ item }: { item: DockItem }) {
       />
 
       <div className='relative z-10 flex flex-col items-center gap-5 text-center'>
-        <span
-          className='flex h-16 w-16 items-center justify-center rounded-2xl shadow-[0_10px_24px_-8px_rgba(0,0,0,0.4)]'
-          style={{
-            background: `linear-gradient(160deg, ${item.from}, ${item.to2})`,
-          }}
-        >
-          <item.Icon className='h-8 w-8 text-white' aria-hidden='true' />
+        <span className='flex h-16 w-16 items-center justify-center drop-shadow-[0_10px_16px_rgba(0,0,0,0.35)]'>
+          <img
+            src={item.icon}
+            alt=''
+            className='h-full w-full object-contain'
+            draggable={false}
+          />
         </span>
         <div>
           <h1 className='font-display text-xl font-semibold'>{item.label}</h1>
