@@ -16,7 +16,7 @@ export default function Dock() {
   return (
     <nav
       aria-label='주요 기능'
-      className='fixed bottom-4 left-1/2 flex -translate-x-1/2 items-end gap-1.5 rounded-3xl border border-white/40 bg-white/25 px-2.5 pt-2.5 pb-2 shadow-[0_20px_40px_-15px_rgba(28,27,41,0.45)] backdrop-blur-2xl sm:bottom-6 sm:gap-3 sm:px-4 sm:pt-3 sm:pb-2.5'
+      className='fixed bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-end gap-1.5 rounded-3xl border border-white/40 bg-white/25 px-2.5 pt-2.5 pb-2 shadow-[0_20px_40px_-15px_rgba(28,27,41,0.45)] backdrop-blur-2xl sm:bottom-6 sm:gap-3 sm:px-4 sm:pt-3 sm:pb-2.5'
       onMouseLeave={() => setHovered(null)}
     >
       {DOCK_ITEMS.map((item, index) => {
