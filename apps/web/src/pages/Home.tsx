@@ -64,18 +64,34 @@ export default function Home() {
               : 'max-w-sm'
           }
         >
-          {(close, minimize) => {
+          {({ close, minimize, toggleMaximize, maximized }) => {
             if (openItem.id === 'projects') {
-              return <FinderWindow onClose={close} onMinimize={minimize} />
+              return (
+                <FinderWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
             }
             if (openItem.id === 'archive') {
-              return <ArchiveWindow onClose={close} onMinimize={minimize} />
+              return (
+                <ArchiveWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
             }
             return (
               <PlaceholderWindow
                 item={openItem}
                 onClose={close}
                 onMinimize={minimize}
+                onToggleMaximize={toggleMaximize}
+                maximized={maximized}
               />
             )
           }}

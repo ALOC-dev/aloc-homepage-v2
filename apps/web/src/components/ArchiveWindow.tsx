@@ -12,9 +12,13 @@ import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
 export default function ArchiveWindow({
   onClose,
   onMinimize,
+  onToggleMaximize,
+  maximized,
 }: {
   onClose: () => void
   onMinimize: () => void
+  onToggleMaximize: () => void
+  maximized: boolean
 }) {
   const [selected, setSelected] = useState<string>(
     ALL_ARCHIVE_PEOPLE[0]?.id ?? '',
@@ -36,7 +40,11 @@ export default function ArchiveWindow({
   return (
     <section
       aria-label='아카이브'
-      className='flex h-[min(600px,80vh)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)]'
+      className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)] transition-[height,max-width] duration-300 ease-out ${
+        maximized
+          ? 'h-[min(900px,90vh)] max-w-[1400px]'
+          : 'h-[min(600px,80vh)] max-w-4xl'
+      }`}
     >
       <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
         <div className='flex gap-2'>
@@ -52,7 +60,12 @@ export default function ArchiveWindow({
             aria-label='최소화'
             className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
           />
-          <span className='h-3 w-3 rounded-full bg-[#28c840]' />
+          <button
+            type='button'
+            onClick={onToggleMaximize}
+            aria-label='확장'
+            className='h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80'
+          />
         </div>
 
         <button

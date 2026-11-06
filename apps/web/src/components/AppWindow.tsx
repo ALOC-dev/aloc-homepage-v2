@@ -16,6 +16,13 @@ type DragStart = {
   rect: DOMRect
 }
 
+export type WindowActions = {
+  close: () => void
+  minimize: () => void
+  toggleMaximize: () => void
+  maximized: boolean
+}
+
 export default function AppWindow({
   onClose,
   minimized = false,
@@ -27,10 +34,11 @@ export default function AppWindow({
   minimized?: boolean
   onMinimize?: () => void
   widthClass?: string
-  children: (close: () => void, minimize: () => void) => ReactNode
+  children: (actions: WindowActions) => ReactNode
 }) {
   const [entered, setEntered] = useState(false)
   const [closing, setClosing] = useState(false)
+  const [maximized, setMaximized] = useState(false)
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
   const dragStart = useRef<DragStart>({
@@ -40,6 +48,7 @@ export default function AppWindow({
     posY: 0,
     rect: new DOMRect(),
   })
+  const posBeforeMaximize = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
@@ -53,6 +62,18 @@ export default function AppWindow({
 
   function handleMinimize() {
     onMinimize?.()
+  }
+
+  function handleToggleMaximize() {
+    setMaximized((wasMaximized) => {
+      if (!wasMaximized) {
+        posBeforeMaximize.current = pos
+        setPos({ x: 0, y: 0 })
+      } else {
+        setPos(posBeforeMaximize.current)
+      }
+      return !wasMaximized
+    })
   }
 
   function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
@@ -96,7 +117,7 @@ export default function AppWindow({
   return (
     <div className='pointer-events-none fixed inset-0 z-[25] flex items-center justify-center px-6'>
       <div
-        className={`w-full ${widthClass}`}
+        className={`w-full transition-[max-width] duration-300 ease-out ${maximized ? 'max-w-[1400px]' : widthClass}`}
         style={{
           pointerEvents: visible ? 'auto' : 'none',
           transform: visible
@@ -104,7 +125,7 @@ export default function AppWindow({
             : 'translateY(220px) scale(0.25)',
           opacity: visible ? 1 : 0,
           transformOrigin: 'bottom center',
-          transition,
+          transition: `${transition}, max-width 300ms ease-out`,
         }}
       >
         <div
@@ -116,7 +137,12 @@ export default function AppWindow({
             transition: dragging ? 'none' : 'transform 200ms ease-out',
           }}
         >
-          {children(handleClose, handleMinimize)}
+          {children({
+            close: handleClose,
+            minimize: handleMinimize,
+            toggleMaximize: handleToggleMaximize,
+            maximized,
+          })}
         </div>
       </div>
     </div>

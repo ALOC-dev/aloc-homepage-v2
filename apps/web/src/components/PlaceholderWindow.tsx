@@ -4,15 +4,21 @@ export default function PlaceholderWindow({
   item,
   onClose,
   onMinimize,
+  onToggleMaximize,
+  maximized,
 }: {
   item: DockItem
   onClose: () => void
   onMinimize: () => void
+  onToggleMaximize: () => void
+  maximized: boolean
 }) {
   return (
     <section
       aria-label={item.label}
-      className='mx-auto w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)]'
+      className={`mx-auto w-full overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)] transition-[max-width] duration-300 ease-out ${
+        maximized ? 'max-w-2xl' : 'max-w-sm'
+      }`}
     >
       <header className='flex items-center gap-2 border-b border-black/5 px-4 py-3'>
         <button
@@ -27,7 +33,12 @@ export default function PlaceholderWindow({
           aria-label='최소화'
           className='h-3 w-3 rounded-full bg-[#febc2e] transition-opacity hover:opacity-80'
         />
-        <span className='h-3 w-3 rounded-full bg-[#28c840]' />
+        <button
+          type='button'
+          onClick={onToggleMaximize}
+          aria-label='확장'
+          className='h-3 w-3 rounded-full bg-[#28c840] transition-opacity hover:opacity-80'
+        />
         <p
           data-drag-handle
           className='ml-2 min-w-0 flex-1 cursor-grab touch-none truncate py-1 font-display text-sm font-semibold text-muted select-none active:cursor-grabbing'
@@ -36,7 +47,11 @@ export default function PlaceholderWindow({
         </p>
       </header>
 
-      <div className='flex flex-col items-center gap-3 px-8 py-12 text-center'>
+      <div
+        className={`flex flex-col items-center gap-3 text-center transition-[padding] duration-300 ease-out ${
+          maximized ? 'px-8 py-24' : 'px-8 py-12'
+        }`}
+      >
         <img
           src={item.icon}
           alt=''
