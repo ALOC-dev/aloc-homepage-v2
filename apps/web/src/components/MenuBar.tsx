@@ -15,7 +15,7 @@ export default function MenuBar() {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 15_000)
+    const id = setInterval(() => setNow(new Date()), 1_000)
     return () => clearInterval(id)
   }, [])
 
