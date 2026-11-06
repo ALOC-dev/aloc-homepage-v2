@@ -25,6 +25,16 @@ export const ARCHIVE_GENERATIONS: ArchiveGeneration[] = [
     label: '3기',
     people: [],
   },
+  {
+    id: 'archive-gen4',
+    label: '4기',
+    people: [],
+  },
+  {
+    id: 'archive-gen5',
+    label: '5기',
+    people: [{ id: 'kimjungmook', label: '5기_김정묵' }],
+  },
 ]
 
 export const ALL_ARCHIVE_PEOPLE: ArchivePerson[] = ARCHIVE_GENERATIONS.flatMap(
