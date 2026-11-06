@@ -2,10 +2,12 @@ import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { DockItem } from '../dockItems'
 import Dock from '../components/Dock'
+import MenuBar from '../components/MenuBar'
 
 export default function ComingSoon({ item }: { item: DockItem }) {
   return (
-    <div className='relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-canvas-deep px-6 pb-32 text-white'>
+    <div className='relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-canvas-deep px-6 pt-8 pb-32 text-white'>
+      <MenuBar />
       <div
         className='pointer-events-none absolute inset-0'
         style={{

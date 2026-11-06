@@ -1,4 +1,5 @@
 import Dock from '../components/Dock'
+import MenuBar from '../components/MenuBar'
 import NoticeAlert from '../components/NoticeAlert'
 import PhotoWindow from '../components/PhotoWindow'
 
@@ -27,14 +28,9 @@ export default function Home() {
         }}
       />
 
-      <header className='relative z-10 flex items-center justify-between px-6 py-4 text-white/90 sm:px-8'>
-        <p className='font-display text-sm font-semibold tracking-tight'>
-          ALOC
-        </p>
-        <p className='text-xs text-white/70'>6기 · 서울시립대학교</p>
-      </header>
+      <MenuBar />
 
-      <main className='relative z-10 flex flex-1 items-center justify-center px-6 pb-32'>
+      <main className='relative z-10 flex flex-1 items-center justify-center px-6 pt-8 pb-32'>
         <div className='flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
           <PhotoWindow />
           <NoticeAlert />
