@@ -5,6 +5,7 @@ import dinnerClose from '../assets/photos/dinner-close.jpg'
 import dinnerWide from '../assets/photos/dinner-wide.jpg'
 import graduationBanner from '../assets/photos/graduation-banner.jpg'
 import otGroup from '../assets/photos/ot-group.jpg'
+import TrafficLights from './TrafficLights'
 
 type Photo = {
   id: string
@@ -40,6 +41,9 @@ type DragStart = {
 export default function PhotoWindow() {
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
+  const [closed, setClosed] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
+  const [maximized, setMaximized] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const dragStart = useRef<DragStart>({
     x: 0,
@@ -82,11 +86,15 @@ export default function PhotoWindow() {
     setDragging(false)
   }
 
+  if (closed) return null
+
   return (
     <section
       ref={sectionRef}
       aria-label='사진'
-      className='w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)]'
+      className={`w-full overflow-hidden rounded-2xl bg-white shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)] transition-[max-width] duration-300 ease-out ${
+        maximized ? 'max-w-3xl' : 'max-w-xl'
+      }`}
       style={{
         transform: `translate(${pos.x}px, ${pos.y}px)`,
         transition: dragging ? 'none' : 'transform 200ms ease-out',
@@ -101,34 +109,40 @@ export default function PhotoWindow() {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
       >
-        <div className='flex gap-2'>
-          <span className='h-3 w-3 rounded-full bg-[#ff5f57]' />
-          <span className='h-3 w-3 rounded-full bg-[#febc2e]' />
-          <span className='h-3 w-3 rounded-full bg-[#28c840]' />
-        </div>
+        <TrafficLights
+          onClose={() => setClosed(true)}
+          onMinimize={() => setCollapsed((v) => !v)}
+          onToggleMaximize={() => setMaximized((v) => !v)}
+        />
         <p className='font-display text-sm font-semibold text-muted'>사진</p>
       </header>
 
-      <div className='grid grid-cols-3 gap-2 p-3'>
-        {PHOTOS.map((photo) => (
-          <figure
-            key={photo.id}
-            className='group relative aspect-square overflow-hidden rounded-lg bg-ink'
-          >
-            <img
-              src={photo.src}
-              alt={photo.caption}
-              draggable={false}
-              className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
-                photo.fit === 'contain' ? 'object-contain' : 'object-cover'
-              }`}
-            />
-            <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
-              {photo.caption}
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      {!collapsed && (
+        <div
+          className={`grid gap-2 p-3 transition-[grid-template-columns] duration-300 ease-out ${
+            maximized ? 'grid-cols-4' : 'grid-cols-3'
+          }`}
+        >
+          {PHOTOS.map((photo) => (
+            <figure
+              key={photo.id}
+              className='group relative aspect-square overflow-hidden rounded-lg bg-ink'
+            >
+              <img
+                src={photo.src}
+                alt={photo.caption}
+                draggable={false}
+                className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
+                  photo.fit === 'contain' ? 'object-contain' : 'object-cover'
+                }`}
+              />
+              <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
+                {photo.caption}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
     </section>
   )
 }
