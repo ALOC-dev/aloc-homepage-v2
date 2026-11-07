@@ -1,3 +1,4 @@
+import { ChevronLeft } from 'lucide-react'
 import { type PointerEvent as ReactPointerEvent, useRef, useState } from 'react'
 import dinner1 from '../assets/photos/dinner-1.jpg'
 import dinner2 from '../assets/photos/dinner-2.jpg'
@@ -44,6 +45,8 @@ export default function PhotoWindow() {
   const [closed, setClosed] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [maximized, setMaximized] = useState(false)
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null)
+  const selectedPhoto = PHOTOS.find((p) => p.id === selectedPhotoId)
   const sectionRef = useRef<HTMLElement>(null)
   const dragStart = useRef<DragStart>({
     x: 0,
@@ -119,32 +122,60 @@ export default function PhotoWindow() {
         <p className='font-display text-sm font-semibold text-muted'>사진</p>
       </header>
 
-      {!collapsed && (
-        <div
-          className={`grid gap-2 p-3 transition-[grid-template-columns] duration-300 ease-out ${
-            maximized ? 'grid-cols-4' : 'grid-cols-3'
-          }`}
-        >
-          {PHOTOS.map((photo) => (
-            <figure
-              key={photo.id}
-              className='group relative aspect-square overflow-hidden rounded-lg bg-ink'
+      {!collapsed &&
+        (selectedPhoto ? (
+          <div className='flex flex-col p-3'>
+            <button
+              type='button'
+              onClick={() => setSelectedPhotoId(null)}
+              className='mb-2 flex w-fit items-center gap-0.5 text-xs font-medium text-[#0A84FF] hover:underline'
+            >
+              <ChevronLeft className='h-3.5 w-3.5' strokeWidth={2.25} />
+              사진
+            </button>
+            <div
+              className={`flex items-center justify-center overflow-hidden rounded-lg bg-black/5 transition-[height] duration-300 ease-out ${
+                maximized ? 'h-80' : 'h-56'
+              }`}
             >
               <img
-                src={photo.src}
-                alt={photo.caption}
+                src={selectedPhoto.src}
+                alt={selectedPhoto.caption}
                 draggable={false}
-                className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
-                  photo.fit === 'contain' ? 'object-contain' : 'object-cover'
-                }`}
+                className='max-h-full max-w-full object-contain'
               />
-              <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
-                {photo.caption}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      )}
+            </div>
+            <p className='mt-2 text-center text-xs font-medium text-ink'>
+              {selectedPhoto.caption}
+            </p>
+          </div>
+        ) : (
+          <div
+            className={`grid gap-2 p-3 transition-[grid-template-columns] duration-300 ease-out ${
+              maximized ? 'grid-cols-4' : 'grid-cols-3'
+            }`}
+          >
+            {PHOTOS.map((photo) => (
+              <figure
+                key={photo.id}
+                onClick={() => setSelectedPhotoId(photo.id)}
+                className='group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-ink'
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.caption}
+                  draggable={false}
+                  className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
+                    photo.fit === 'contain' ? 'object-contain' : 'object-cover'
+                  }`}
+                />
+                <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
+                  {photo.caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        ))}
     </section>
   )
 }
