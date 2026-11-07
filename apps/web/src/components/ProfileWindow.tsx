@@ -1,19 +1,17 @@
 import {
   Archive,
-  Building2,
-  CalendarDays,
-  Clock,
+  Briefcase,
+  Code2,
+  FlaskConical,
   FolderGit2,
-  Home,
   Inbox,
   Info,
+  Landmark,
   PanelLeft,
   Plus,
   Search,
-  Star,
   Trash2,
   Trophy,
-  User,
   Users,
   Waves,
   type LucideIcon,
@@ -46,7 +44,7 @@ const AVATAR_COLORS = [
   'bg-[#FF375F]',
 ]
 
-const QUICK_FILTERS: {
+const JOB_FIELDS: {
   id: string
   icon: LucideIcon
   color: string
@@ -54,56 +52,32 @@ const QUICK_FILTERS: {
   count: number
 }[] = [
   {
-    id: 'siri',
-    icon: Inbox,
+    id: 'developer',
+    icon: Code2,
     color: 'bg-[#0A84FF]',
-    label: 'Siri 제안',
-    count: 4,
+    label: '개발자',
+    count: 0,
   },
   {
-    id: 'recents',
-    icon: Clock,
-    color: 'bg-[#FF375F]',
-    label: '최근 항목',
-    count: 5,
+    id: 'research',
+    icon: FlaskConical,
+    color: 'bg-[#BF5AF2]',
+    label: '연구실',
+    count: 0,
   },
   {
-    id: 'favorites',
-    icon: Star,
+    id: 'public',
+    icon: Landmark,
     color: 'bg-[#FF9F0A]',
-    label: '즐겨찾기',
-    count: 3,
+    label: '공기업',
+    count: 0,
   },
   {
-    id: 'events',
-    icon: CalendarDays,
-    color: 'bg-[#FF375F]',
-    label: '예정된 일정',
-    count: 1,
-  },
-]
-
-const ICLOUD_GROUPS: {
-  id: string
-  icon: LucideIcon
-  color: string
-  label: string
-  count: number
-}[] = [
-  {
-    id: 'friends',
-    icon: User,
-    color: 'bg-[#FF375F]',
-    label: '친구',
-    count: 24,
-  },
-  { id: 'family', icon: Home, color: 'bg-[#FF9F0A]', label: '가족', count: 13 },
-  {
-    id: 'business',
-    icon: Building2,
-    color: 'bg-[#0A84FF]',
-    label: '비즈니스',
-    count: 13,
+    id: 'it-etc',
+    icon: Briefcase,
+    color: 'bg-[#34C759]',
+    label: 'IT외직군',
+    count: 0,
   },
 ]
 
@@ -147,7 +121,7 @@ export default function ProfileWindow({
   const [selectedId, setSelectedId] = useState<string | null>(
     () => allPeople[0]?.id ?? null,
   )
-  const [selectedGroup, setSelectedGroup] = useState('friends')
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
@@ -155,20 +129,34 @@ export default function ProfileWindow({
 
   const selected = allPeople.find((p) => p.id === selectedId)
 
-  const filteredPeople = allPeople.filter((p) =>
-    p.name.toLowerCase().includes(query.trim().toLowerCase()),
+  const generationGroups = PROFILE_GENERATIONS.toReversed()
+
+  function handleSelectGroup(id: string) {
+    setSelectedGroup((prev) => (prev === id ? null : id))
+  }
+
+  const selectedGeneration = selectedGroup
+    ? PROFILE_GENERATIONS.find((gen) => gen.id === selectedGroup)
+    : undefined
+  const isJobFieldSelected = selectedGroup !== null && !selectedGeneration
+
+  const scopedPeople = selectedGeneration
+    ? selectedGeneration.people
+    : isJobFieldSelected
+      ? []
+      : allPeople
+
+  const filteredPeople = scopedPeople.filter((p) =>
+    `${p.generation}_${p.name}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
   )
-  const sortedPeople = [...filteredPeople].sort((a, b) =>
-    a.name.localeCompare(b.name, 'ko'),
-  )
-  const letterGroups: { letter: string; people: ProfilePerson[] }[] = []
-  for (const person of sortedPeople) {
-    const letter = person.name.charAt(0)
-    const lastGroup = letterGroups[letterGroups.length - 1]
-    if (lastGroup && lastGroup.letter === letter) {
-      lastGroup.people.push(person)
-    } else {
-      letterGroups.push({ letter, people: [person] })
+
+  const displayGroups: { label: string; people: ProfilePerson[] }[] = []
+  for (const gen of generationGroups) {
+    const people = filteredPeople.filter((p) => p.generation === gen.label)
+    if (people.length > 0) {
+      displayGroups.push({ label: gen.label, people })
     }
   }
 
@@ -227,12 +215,12 @@ export default function ProfileWindow({
 
             <div className='flex-1 px-3 pt-3 pb-2'>
               <ul className='flex flex-col gap-0.5 border-b border-black/5 pb-2'>
-                {QUICK_FILTERS.map((item) => (
+                {JOB_FIELDS.map((item) => (
                   <GroupRow
                     key={item.id}
                     item={item}
                     active={selectedGroup === item.id}
-                    onClick={() => setSelectedGroup(item.id)}
+                    onClick={() => handleSelectGroup(item.id)}
                   />
                 ))}
               </ul>
@@ -241,12 +229,17 @@ export default function ProfileWindow({
                 iCloud
               </p>
               <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
-                {ICLOUD_GROUPS.map((item) => (
+                {generationGroups.map((gen) => (
                   <GroupRow
-                    key={item.id}
-                    item={item}
-                    active={selectedGroup === item.id}
-                    onClick={() => setSelectedGroup(item.id)}
+                    key={gen.id}
+                    item={{
+                      icon: Users,
+                      color: 'bg-[#0A84FF]',
+                      label: gen.label,
+                      count: gen.people.length,
+                    }}
+                    active={selectedGroup === gen.id}
+                    onClick={() => handleSelectGroup(gen.id)}
                   />
                 ))}
               </ul>
@@ -260,7 +253,7 @@ export default function ProfileWindow({
                     key={item.id}
                     item={item}
                     active={selectedGroup === item.id}
-                    onClick={() => setSelectedGroup(item.id)}
+                    onClick={() => handleSelectGroup(item.id)}
                   />
                 ))}
               </ul>
@@ -300,13 +293,19 @@ export default function ProfileWindow({
 
         {sidebarOpen && (
           <nav className='flex w-44 shrink-0 flex-col gap-0.5 overflow-y-auto border-r border-black/5 px-2 py-3 sm:w-48'>
-            {letterGroups.length === 0 ? (
-              <p className='px-2 text-[13px] text-muted'>검색 결과가 없어요.</p>
+            {displayGroups.length === 0 ? (
+              <p className='px-2 text-[13px] text-muted'>
+                {query.trim()
+                  ? '검색 결과가 없어요.'
+                  : isJobFieldSelected
+                    ? '아직 분류된 멤버가 없어요.'
+                    : '표시할 멤버가 없어요.'}
+              </p>
             ) : (
-              letterGroups.map((group) => (
-                <div key={group.letter}>
+              displayGroups.map((group) => (
+                <div key={group.label}>
                   <p className='border-b border-black/5 px-2 pb-1 text-[11px] text-muted'>
-                    {group.letter}
+                    {group.label}
                   </p>
                   <ul className='mt-0.5 flex flex-col gap-0.5'>
                     {group.people.map((person) => {
@@ -333,7 +332,9 @@ export default function ProfileWindow({
                             >
                               {person.name.slice(0, 1)}
                             </span>
-                            <span className='truncate'>{person.name}</span>
+                            <span className='truncate'>
+                              {person.generation}_{person.name}
+                            </span>
                           </button>
                         </li>
                       )

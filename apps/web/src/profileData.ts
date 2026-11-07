@@ -41,6 +41,11 @@ export const PROFILE_GENERATIONS: ProfileGeneration[] = [
     label: '5기',
     people: [{ id: 'kimjungmook', name: '김정묵', generation: '5기' }],
   },
+  {
+    id: 'profile-gen6',
+    label: '6기',
+    people: [],
+  },
 ]
 
 export const ALL_PROFILE_PEOPLE: ProfilePerson[] = PROFILE_GENERATIONS.flatMap(
