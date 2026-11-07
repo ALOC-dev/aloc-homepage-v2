@@ -120,10 +120,8 @@ export default function AppWindow({
   return (
     <div className='pointer-events-none fixed inset-0 z-[25] flex items-center justify-center px-6'>
       <div
-        className={`w-full transition-[max-width] duration-300 ease-out ${maximized ? 'max-w-[1400px]' : widthClass}`}
-        onPointerDownCapture={onFocus}
+        className={`pointer-events-none w-full transition-[max-width] duration-300 ease-out ${maximized ? 'max-w-[1400px]' : widthClass}`}
         style={{
-          pointerEvents: visible ? 'auto' : 'none',
           transform: visible
             ? 'translateY(0) scale(1)'
             : 'translateY(220px) scale(0.25)',
@@ -136,7 +134,9 @@ export default function AppWindow({
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onPointerDownCapture={onFocus}
           style={{
+            pointerEvents: visible ? 'auto' : 'none',
             transform: `translate(${pos.x}px, ${pos.y}px)`,
             transition: dragging ? 'none' : 'transform 200ms ease-out',
           }}

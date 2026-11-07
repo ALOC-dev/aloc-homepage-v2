@@ -62,8 +62,10 @@ type DragStart = {
 
 export default function PhotoWindow({
   onOpenPhoto,
+  onPointerDownCapture,
 }: {
   onOpenPhoto: (photo: PreviewPhoto) => void
+  onPointerDownCapture?: () => void
 }) {
   const [pos, setPos] = useState({ x: 0, y: 0 })
   const [dragging, setDragging] = useState(false)
@@ -118,7 +120,8 @@ export default function PhotoWindow({
     <section
       ref={sectionRef}
       aria-label='사진'
-      className={`w-full overflow-hidden rounded-2xl bg-white shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)] transition-[max-width] duration-300 ease-out ${
+      onPointerDownCapture={onPointerDownCapture}
+      className={`pointer-events-auto w-full overflow-hidden rounded-2xl bg-white shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)] transition-[max-width] duration-300 ease-out ${
         maximized ? 'max-w-3xl' : 'max-w-xl'
       }`}
       style={{

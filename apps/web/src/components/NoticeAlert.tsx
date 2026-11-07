@@ -2,7 +2,11 @@ import { useState } from 'react'
 
 type Response = 'none' | 'joined' | 'declined'
 
-export default function NoticeAlert() {
+export default function NoticeAlert({
+  onPointerDownCapture,
+}: {
+  onPointerDownCapture?: () => void
+} = {}) {
   const [response, setResponse] = useState<Response>('none')
   const [closing, setClosing] = useState(false)
   const [removed, setRemoved] = useState(false)
@@ -11,7 +15,8 @@ export default function NoticeAlert() {
 
   return (
     <div
-      className='w-full max-w-xs rounded-2xl border border-white/60 bg-white/95 p-5 text-center shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)] backdrop-blur-xl transition-all duration-200'
+      onPointerDownCapture={onPointerDownCapture}
+      className='pointer-events-auto w-full max-w-xs rounded-2xl border border-white/60 bg-white/95 p-5 text-center shadow-[0_30px_60px_-20px_rgba(28,27,41,0.55)] backdrop-blur-xl transition-all duration-200'
       style={{
         opacity: closing ? 0 : 1,
         transform: closing ? 'scale(0.92) translateY(6px)' : 'none',

@@ -64,12 +64,14 @@ export default function Home() {
       <MenuBar />
 
       <main
-        className={`relative flex flex-1 items-center justify-center px-6 pt-14 pb-32 ${homeInFront ? 'z-[26]' : 'z-10'}`}
-        onPointerDownCapture={() => setHomeInFront(true)}
+        className={`pointer-events-none relative flex flex-1 items-center justify-center px-6 pt-14 pb-32 ${homeInFront ? 'z-[26]' : 'z-10'}`}
       >
-        <div className='flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
-          <PhotoWindow onOpenPhoto={setPreviewPhoto} />
-          <NoticeAlert />
+        <div className='pointer-events-none flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
+          <PhotoWindow
+            onOpenPhoto={setPreviewPhoto}
+            onPointerDownCapture={() => setHomeInFront(true)}
+          />
+          <NoticeAlert onPointerDownCapture={() => setHomeInFront(true)} />
         </div>
       </main>
 
