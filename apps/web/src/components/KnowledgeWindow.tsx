@@ -28,7 +28,7 @@ export default function KnowledgeWindow({
 }) {
   const nonEmptyGenerations = KNOWLEDGE_GENERATIONS.filter(
     (gen) => gen.talks.length > 0,
-  )
+  ).toReversed()
 
   return (
     <section
