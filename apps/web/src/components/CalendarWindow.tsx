@@ -1,5 +1,6 @@
 import {
   Calendar as CalendarIcon,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Inbox,
@@ -8,6 +9,7 @@ import {
   Waves,
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
 import TrafficLights from './TrafficLights'
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -60,11 +62,7 @@ const OTHER_CALENDARS: {
   label: string
   color: string
   subscribed?: boolean
-}[] = [
-  { label: '예정된 미리 알림', color: 'bg-[#0A84FF]' },
-  { label: '생일', color: 'bg-[#0A84FF]' },
-  { label: '대한민국 공휴일', color: 'bg-[#BF5AF2]', subscribed: true },
-]
+}[] = [{ label: '대한민국 공휴일', color: 'bg-[#BF5AF2]', subscribed: true }]
 
 export default function CalendarWindow({
   onClose,
@@ -81,6 +79,7 @@ export default function CalendarWindow({
   const [cursor, setCursor] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1),
   )
+  const [birthdaysOpen, setBirthdaysOpen] = useState(true)
 
   const cells = useMemo(
     () => buildMonthGrid(cursor.getFullYear(), cursor.getMonth()),
@@ -180,6 +179,44 @@ export default function CalendarWindow({
           <div>
             <p className='px-2 text-[11px] font-medium text-muted'>기타</p>
             <ul className='mt-1 flex flex-col gap-0.5'>
+              <li>
+                <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
+                  <span className='h-3 w-3 shrink-0 rounded-[3px] bg-[#0A84FF]' />
+                  <span className='min-w-0 flex-1 truncate'>
+                    예정된 미리 알림
+                  </span>
+                </span>
+              </li>
+
+              <li>
+                <button
+                  type='button'
+                  onClick={() => setBirthdaysOpen((v) => !v)}
+                  className='flex w-full items-center gap-1 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'
+                >
+                  <ChevronDown
+                    className={`h-3 w-3 shrink-0 text-muted transition-transform ${birthdaysOpen ? '' : '-rotate-90'}`}
+                    strokeWidth={2.5}
+                  />
+                  <span className='h-3 w-3 shrink-0 rounded-[3px] bg-[#0A84FF]' />
+                  <span className='min-w-0 flex-1 truncate'>생일</span>
+                </button>
+                {birthdaysOpen && (
+                  <ul className='mt-0.5 flex flex-col gap-0.5 pl-5'>
+                    {ALL_ARCHIVE_PEOPLE.map((person) => (
+                      <li key={person.id}>
+                        <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
+                          <span className='h-2.5 w-2.5 shrink-0 rounded-[3px] bg-[#0A84FF]/60' />
+                          <span className='min-w-0 flex-1 truncate'>
+                            {person.label}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+
               {OTHER_CALENDARS.map((cal) => (
                 <li key={cal.label}>
                   <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
