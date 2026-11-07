@@ -6,7 +6,7 @@ import {
   PanelLeft,
   Search,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ALL_ARCHIVE_PEOPLE } from '../archiveData'
 import folderIcon from '../assets/dock-icons/folder.png'
 import TrafficLights from './TrafficLights'
@@ -18,11 +18,13 @@ export default function ArchiveWindow({
   onMinimize,
   onToggleMaximize,
   maximized,
+  onTitleChange,
 }: {
   onClose: () => void
   onMinimize: () => void
   onToggleMaximize: () => void
   maximized: boolean
+  onTitleChange?: (title: string) => void
 }) {
   const [selected, setSelected] = useState<string>(OVERVIEW_ID)
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
@@ -51,6 +53,10 @@ export default function ArchiveWindow({
       empty: true,
     }
   }, [selected])
+
+  useEffect(() => {
+    onTitleChange?.(selectedSource.title || '아카이브')
+  }, [selectedSource.title, onTitleChange])
 
   const filteredPeople = ALL_ARCHIVE_PEOPLE.filter((p) =>
     p.label.toLowerCase().includes(query.trim().toLowerCase()),

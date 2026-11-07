@@ -18,7 +18,15 @@ export default function Home() {
   const [openId, setOpenId] = useState<string | null>(null)
   const [minimized, setMinimized] = useState(false)
   const [previewPhoto, setPreviewPhoto] = useState<PreviewPhoto | null>(null)
+  const [archiveTitle, setArchiveTitle] = useState('아카이브')
   const openItem = DOCK_ITEMS.find((item) => item.id === openId)
+  const minimizedItem =
+    minimized && openItem
+      ? {
+          ...openItem,
+          label: openItem.id === 'archive' ? archiveTitle : openItem.label,
+        }
+      : undefined
 
   function handleSelect(id: string) {
     setOpenId(id)
@@ -99,6 +107,7 @@ export default function Home() {
                   onMinimize={minimize}
                   onToggleMaximize={toggleMaximize}
                   maximized={maximized}
+                  onTitleChange={setArchiveTitle}
                 />
               )
             }
@@ -137,7 +146,7 @@ export default function Home() {
 
       <Dock
         onSelect={handleSelect}
-        minimizedItem={minimized ? openItem : undefined}
+        minimizedItem={minimizedItem}
         onRestore={() => setMinimized(false)}
       />
     </div>
