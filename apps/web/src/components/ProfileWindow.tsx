@@ -1,16 +1,13 @@
 import {
-  Archive,
   Briefcase,
   Code2,
   FlaskConical,
   FolderGit2,
-  Inbox,
   Info,
   Landmark,
   PanelLeft,
   Plus,
   Search,
-  Trash2,
   Trophy,
   Users,
   Waves,
@@ -78,31 +75,6 @@ const JOB_FIELDS: {
     color: 'bg-[#34C759]',
     label: 'IT외직군',
     count: 0,
-  },
-]
-
-const SHARED_GROUPS: {
-  id: string
-  icon: LucideIcon
-  color: string
-  label: string
-  count: number
-  subscribed?: boolean
-}[] = [
-  {
-    id: 'work',
-    icon: Inbox,
-    color: 'bg-[#0A84FF]',
-    label: '업무',
-    count: 5,
-    subscribed: true,
-  },
-  {
-    id: 'shared-family',
-    icon: Users,
-    color: 'bg-[#FF375F]',
-    label: '공유 가족',
-    count: 36,
   },
 ]
 
@@ -230,7 +202,7 @@ export default function ProfileWindow({
               <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
                 iCloud
               </p>
-              <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
+              <ul className='mt-1 flex flex-col gap-0.5'>
                 {generationGroups.map((gen) => {
                   const genNumber = PROFILE_GENERATIONS.indexOf(gen) + 1
                   return (
@@ -247,41 +219,6 @@ export default function ProfileWindow({
                     />
                   )
                 })}
-              </ul>
-
-              <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
-                공유
-              </p>
-              <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
-                {SHARED_GROUPS.map((item) => (
-                  <GroupRow
-                    key={item.id}
-                    item={item}
-                    active={selectedGroup === item.id}
-                    onClick={() => handleSelectGroup(item.id)}
-                  />
-                ))}
-              </ul>
-
-              <ul className='mt-2 flex flex-col gap-0.5'>
-                <li>
-                  <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
-                    <Archive
-                      className='h-4 w-4 shrink-0 text-muted'
-                      strokeWidth={1.75}
-                    />
-                    보관함
-                  </span>
-                </li>
-                <li>
-                  <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
-                    <Trash2
-                      className='h-4 w-4 shrink-0 text-muted'
-                      strokeWidth={1.75}
-                    />
-                    휴지통
-                  </span>
-                </li>
               </ul>
             </div>
 
