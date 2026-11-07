@@ -1,4 +1,5 @@
 import {
+  ChevronLeft,
   Columns3,
   GalleryHorizontalEnd,
   LayoutGrid,
@@ -123,6 +124,17 @@ export default function FinderWindow({
         >
           <PanelLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
         </button>
+
+        {selected !== OVERVIEW_ID && (
+          <button
+            type='button'
+            onClick={() => handleSelectCategory(OVERVIEW_ID)}
+            className='rounded-md p-1 text-muted hover:bg-black/5'
+            aria-label='뒤로'
+          >
+            <ChevronLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
+          </button>
+        )}
 
         <div
           data-drag-handle
