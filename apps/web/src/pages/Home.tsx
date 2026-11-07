@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import ArchiveWindow from '../components/ArchiveWindow'
 import AppWindow from '../components/AppWindow'
+import CalendarWindow from '../components/CalendarWindow'
 import Dock from '../components/Dock'
 import FinderWindow from '../components/FinderWindow'
 import MenuBar from '../components/MenuBar'
@@ -74,7 +75,8 @@ export default function Home() {
           widthClass={
             openItem.id === 'projects' ||
             openItem.id === 'archive' ||
-            openItem.id === 'photos'
+            openItem.id === 'photos' ||
+            openItem.id === 'schedule'
               ? 'max-w-4xl'
               : 'max-w-sm'
           }
@@ -103,6 +105,16 @@ export default function Home() {
             if (openItem.id === 'photos') {
               return (
                 <PhotosAppWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
+            }
+            if (openItem.id === 'schedule') {
+              return (
+                <CalendarWindow
                   onClose={close}
                   onMinimize={minimize}
                   onToggleMaximize={toggleMaximize}
