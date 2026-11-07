@@ -21,6 +21,7 @@ export default function Home() {
   const [minimized, setMinimized] = useState(false)
   const [previewPhoto, setPreviewPhoto] = useState<PreviewPhoto | null>(null)
   const [archiveTitle, setArchiveTitle] = useState('아카이브')
+  const [homeInFront, setHomeInFront] = useState(false)
   const openItem = DOCK_ITEMS.find((item) => item.id === openId)
   const minimizedItem =
     minimized && openItem
@@ -33,6 +34,7 @@ export default function Home() {
   function handleSelect(id: string) {
     setOpenId(id)
     setMinimized(false)
+    setHomeInFront(false)
   }
 
   return (
@@ -61,7 +63,10 @@ export default function Home() {
 
       <MenuBar />
 
-      <main className='relative z-10 flex flex-1 items-center justify-center px-6 pt-14 pb-32'>
+      <main
+        className={`relative flex flex-1 items-center justify-center px-6 pt-14 pb-32 ${homeInFront ? 'z-[26]' : 'z-10'}`}
+        onPointerDownCapture={() => setHomeInFront(true)}
+      >
         <div className='flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
           <PhotoWindow onOpenPhoto={setPreviewPhoto} />
           <NoticeAlert />
@@ -82,6 +87,7 @@ export default function Home() {
           onClose={() => setOpenId(null)}
           minimized={minimized}
           onMinimize={() => setMinimized(true)}
+          onFocus={() => setHomeInFront(false)}
           widthClass={
             openItem.id === 'schedule'
               ? 'max-w-[1360px]'
@@ -172,7 +178,10 @@ export default function Home() {
       <Dock
         onSelect={handleSelect}
         minimizedItem={minimizedItem}
-        onRestore={() => setMinimized(false)}
+        onRestore={() => {
+          setMinimized(false)
+          setHomeInFront(false)
+        }}
       />
     </div>
   )

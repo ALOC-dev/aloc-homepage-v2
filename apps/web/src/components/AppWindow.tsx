@@ -28,12 +28,14 @@ export default function AppWindow({
   minimized = false,
   onMinimize,
   widthClass = 'max-w-4xl',
+  onFocus,
   children,
 }: {
   onClose: () => void
   minimized?: boolean
   onMinimize?: () => void
   widthClass?: string
+  onFocus?: () => void
   children: (actions: WindowActions) => ReactNode
 }) {
   const [entered, setEntered] = useState(false)
@@ -119,6 +121,7 @@ export default function AppWindow({
     <div className='pointer-events-none fixed inset-0 z-[25] flex items-center justify-center px-6'>
       <div
         className={`w-full transition-[max-width] duration-300 ease-out ${maximized ? 'max-w-[1400px]' : widthClass}`}
+        onPointerDownCapture={onFocus}
         style={{
           pointerEvents: visible ? 'auto' : 'none',
           transform: visible
