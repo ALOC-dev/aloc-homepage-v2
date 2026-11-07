@@ -2,14 +2,17 @@ import {
   ChevronLeft,
   Clock,
   Copy,
+  Crop,
   Heart,
   Image as ImageIcon,
   Images,
   Info,
   Map as MapIcon,
   MessageCircle,
+  Minus,
   PanelLeft,
   PenLine,
+  Plus,
   Receipt,
   Search,
   Share,
@@ -18,6 +21,7 @@ import {
   Trash2,
   User,
   Video,
+  Wand2,
   type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -195,18 +199,57 @@ export default function PhotosAppWindow({
           </nav>
         )}
 
-        <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-5'>
+        <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>
           {selectedPhoto ? (
             <div className='flex min-h-0 flex-1 flex-col'>
-              <button
-                type='button'
-                onClick={() => setSelectedPhotoId(null)}
-                className='mb-3 flex w-fit items-center gap-0.5 text-sm font-medium text-[#0A84FF] hover:underline'
-              >
-                <ChevronLeft className='h-4 w-4' strokeWidth={2.25} />
-                모든 사진
-              </button>
-              <div className='flex min-h-0 flex-1 items-center justify-center'>
+              <div className='flex items-center gap-3 border-b border-black/5 px-4 py-2'>
+                <button
+                  type='button'
+                  onClick={() => setSelectedPhotoId(null)}
+                  className='rounded-md p-1 text-muted hover:bg-black/5'
+                  aria-label='뒤로'
+                >
+                  <ChevronLeft className='h-5 w-5' strokeWidth={2} />
+                </button>
+
+                <div className='hidden items-center gap-1.5 text-muted sm:flex'>
+                  <Minus className='h-3.5 w-3.5' strokeWidth={2} />
+                  <input
+                    type='range'
+                    defaultValue={50}
+                    readOnly
+                    className='h-1 w-20 accent-[#0A84FF]'
+                  />
+                  <Plus className='h-3.5 w-3.5' strokeWidth={2} />
+                </div>
+
+                <div className='min-w-0 flex-1 text-center'>
+                  <p className='truncate text-sm font-semibold text-ink'>
+                    {selectedPhoto.caption}
+                  </p>
+                  <p className='truncate text-[11px] text-muted'>
+                    {PHOTOS.findIndex((p) => p.id === selectedPhoto.id) + 1}/
+                    {PHOTOS.length}
+                  </p>
+                </div>
+
+                <div className='hidden items-center gap-3 text-muted md:flex'>
+                  <Info className='h-4 w-4' strokeWidth={1.75} />
+                  <Share className='h-4 w-4' strokeWidth={1.75} />
+                  <Heart className='h-4 w-4' strokeWidth={1.75} />
+                  <Crop className='h-4 w-4' strokeWidth={1.75} />
+                  <Wand2 className='h-4 w-4' strokeWidth={1.75} />
+                </div>
+
+                <button
+                  type='button'
+                  className='rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-ink hover:bg-black/10'
+                >
+                  편집
+                </button>
+              </div>
+
+              <div className='flex min-h-0 flex-1 items-center justify-center bg-black/[0.03] p-5'>
                 <img
                   src={selectedPhoto.src}
                   alt={selectedPhoto.caption}
@@ -214,12 +257,9 @@ export default function PhotosAppWindow({
                   className='max-h-full max-w-full rounded-lg object-contain shadow-[0_20px_40px_-12px_rgba(28,27,41,0.4)]'
                 />
               </div>
-              <p className='mt-3 text-center text-sm font-medium text-ink'>
-                {selectedPhoto.caption}
-              </p>
             </div>
           ) : (
-            <>
+            <div className='p-5'>
               <p className='mb-3 text-sm font-semibold text-ink'>모든 사진</p>
               <div className='grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2'>
                 {PHOTOS.map((photo) => (
@@ -244,7 +284,7 @@ export default function PhotosAppWindow({
                   </figure>
                 ))}
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
