@@ -1,4 +1,5 @@
 import {
+  ChevronLeft,
   Clock,
   Copy,
   Heart,
@@ -87,6 +88,8 @@ export default function PhotosAppWindow({
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
   const [view, setView] = useState<'year' | 'month' | 'all'>('all')
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null)
+  const selectedPhoto = PHOTOS.find((p) => p.id === selectedPhotoId)
 
   return (
     <section
@@ -192,28 +195,57 @@ export default function PhotosAppWindow({
           </nav>
         )}
 
-        <div className='flex-1 overflow-y-auto p-5'>
-          <p className='mb-3 text-sm font-semibold text-ink'>모든 사진</p>
-          <div className='grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2'>
-            {PHOTOS.map((photo) => (
-              <figure
-                key={photo.id}
-                className='group relative aspect-square overflow-hidden rounded-lg bg-ink'
+        <div className='flex min-h-0 flex-1 flex-col overflow-y-auto p-5'>
+          {selectedPhoto ? (
+            <div className='flex min-h-0 flex-1 flex-col'>
+              <button
+                type='button'
+                onClick={() => setSelectedPhotoId(null)}
+                className='mb-3 flex w-fit items-center gap-0.5 text-sm font-medium text-[#0A84FF] hover:underline'
               >
+                <ChevronLeft className='h-4 w-4' strokeWidth={2.25} />
+                모든 사진
+              </button>
+              <div className='flex min-h-0 flex-1 items-center justify-center'>
                 <img
-                  src={photo.src}
-                  alt={photo.caption}
+                  src={selectedPhoto.src}
+                  alt={selectedPhoto.caption}
                   draggable={false}
-                  className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
-                    photo.fit === 'contain' ? 'object-contain' : 'object-cover'
-                  }`}
+                  className='max-h-full max-w-full rounded-lg object-contain shadow-[0_20px_40px_-12px_rgba(28,27,41,0.4)]'
                 />
-                <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
-                  {photo.caption}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+              </div>
+              <p className='mt-3 text-center text-sm font-medium text-ink'>
+                {selectedPhoto.caption}
+              </p>
+            </div>
+          ) : (
+            <>
+              <p className='mb-3 text-sm font-semibold text-ink'>모든 사진</p>
+              <div className='grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2'>
+                {PHOTOS.map((photo) => (
+                  <figure
+                    key={photo.id}
+                    onClick={() => setSelectedPhotoId(photo.id)}
+                    className='group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-ink'
+                  >
+                    <img
+                      src={photo.src}
+                      alt={photo.caption}
+                      draggable={false}
+                      className={`h-full w-full transition-transform duration-300 group-hover:scale-110 ${
+                        photo.fit === 'contain'
+                          ? 'object-contain'
+                          : 'object-cover'
+                      }`}
+                    />
+                    <figcaption className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent px-2 pt-6 pb-1.5 text-[11px] font-medium text-white'>
+                      {photo.caption}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
