@@ -4,6 +4,7 @@ import AppWindow from '../components/AppWindow'
 import CalendarWindow from '../components/CalendarWindow'
 import Dock from '../components/Dock'
 import FinderWindow from '../components/FinderWindow'
+import KnowledgeWindow from '../components/KnowledgeWindow'
 import MenuBar from '../components/MenuBar'
 import NoticeAlert from '../components/NoticeAlert'
 import PhotoPreviewWindow, {
@@ -87,7 +88,8 @@ export default function Home() {
               : openItem.id === 'projects' ||
                   openItem.id === 'archive' ||
                   openItem.id === 'photos' ||
-                  openItem.id === 'profile'
+                  openItem.id === 'profile' ||
+                  openItem.id === 'knowledge'
                 ? 'max-w-4xl'
                 : 'max-w-sm'
           }
@@ -137,6 +139,16 @@ export default function Home() {
             if (openItem.id === 'profile') {
               return (
                 <ProfileWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
+            }
+            if (openItem.id === 'knowledge') {
+              return (
+                <KnowledgeWindow
                   onClose={close}
                   onMinimize={minimize}
                   onToggleMaximize={toggleMaximize}
