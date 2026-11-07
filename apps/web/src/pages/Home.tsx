@@ -5,6 +5,7 @@ import Dock from '../components/Dock'
 import FinderWindow from '../components/FinderWindow'
 import MenuBar from '../components/MenuBar'
 import NoticeAlert from '../components/NoticeAlert'
+import PhotosAppWindow from '../components/PhotosAppWindow'
 import PhotoWindow from '../components/PhotoWindow'
 import PlaceholderWindow from '../components/PlaceholderWindow'
 import { DOCK_ITEMS } from '../dockItems'
@@ -59,7 +60,9 @@ export default function Home() {
           minimized={minimized}
           onMinimize={() => setMinimized(true)}
           widthClass={
-            openItem.id === 'projects' || openItem.id === 'archive'
+            openItem.id === 'projects' ||
+            openItem.id === 'archive' ||
+            openItem.id === 'photos'
               ? 'max-w-4xl'
               : 'max-w-sm'
           }
@@ -78,6 +81,16 @@ export default function Home() {
             if (openItem.id === 'archive') {
               return (
                 <ArchiveWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
+            }
+            if (openItem.id === 'photos') {
+              return (
+                <PhotosAppWindow
                   onClose={close}
                   onMinimize={minimize}
                   onToggleMaximize={toggleMaximize}
