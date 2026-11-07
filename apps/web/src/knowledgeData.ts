@@ -18,6 +18,14 @@ export const KNOWLEDGE_GENERATIONS: KnowledgeGeneration[] = [
     id: 'knowledge-gen5',
     label: '5기',
     talks: [
+      { id: 'git-branch-strategy', title: '깃 브랜치 전략' },
+      { id: 'ts-generics-101', title: '타입스크립트 제네릭 입문' },
+    ],
+  },
+  {
+    id: 'knowledge-gen6',
+    label: '6기',
+    talks: [
       { id: 'figma-how-to', title: '피그마 어떻게 써요?' },
       { id: 'write-or-not', title: '쓰거나 쓰지 않거나' },
     ],
