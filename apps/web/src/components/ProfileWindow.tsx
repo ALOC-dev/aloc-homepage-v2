@@ -200,7 +200,7 @@ export default function ProfileWindow({
               </ul>
 
               <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
-                iCloud
+                Cohort
               </p>
               <ul className='mt-1 flex flex-col gap-0.5'>
                 {generationGroups.map((gen) => {
