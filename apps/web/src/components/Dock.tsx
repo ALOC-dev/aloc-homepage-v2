@@ -15,6 +15,7 @@ export default function Dock({
   onRestore?: () => void
 }) {
   const [hovered, setHovered] = useState<number | null>(null)
+  const [minimizedHovered, setMinimizedHovered] = useState(false)
 
   return (
     <nav
@@ -76,11 +77,23 @@ export default function Dock({
           <button
             type='button'
             onClick={onRestore}
+            onMouseEnter={() => setMinimizedHovered(true)}
+            onMouseLeave={() => setMinimizedHovered(false)}
+            onFocus={() => setMinimizedHovered(true)}
+            onBlur={() => setMinimizedHovered(false)}
             className='relative flex flex-col items-center border-0 bg-transparent p-0 transition-transform duration-150 hover:-translate-y-1 focus:outline-none'
           >
             <span
               role='tooltip'
-              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white opacity-0 shadow-lg transition-opacity duration-150 hover:opacity-100 sm:-top-10'
+              className='pointer-events-none absolute -top-8 rounded-md bg-ink/90 px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-lg sm:-top-10'
+              style={{
+                opacity: minimizedHovered ? 1 : 0,
+                transform: minimizedHovered
+                  ? 'translateY(0) scale(1)'
+                  : 'translateY(4px) scale(0.85)',
+                transition: 'opacity 180ms ease-out, transform 180ms ease-out',
+                transitionDelay: minimizedHovered ? '60ms' : '0ms',
+              }}
             >
               {minimizedItem.label}
             </span>
