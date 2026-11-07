@@ -117,21 +117,35 @@ export default function ProfileWindow({
                         </span>
                       </div>
                       <ul className='mt-1 flex flex-col gap-0.5'>
-                        {gen.people.map((person) => (
-                          <li key={person.id}>
-                            <button
-                              type='button'
-                              onClick={() => setSelectedId(person.id)}
-                              className={`w-full rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
-                                selectedId === person.id
-                                  ? 'bg-[#0A84FF] text-white'
-                                  : 'text-ink hover:bg-black/5'
-                              }`}
-                            >
-                              {person.name}
-                            </button>
-                          </li>
-                        ))}
+                        {gen.people.map((person) => {
+                          const isSelected = selectedId === person.id
+                          return (
+                            <li key={person.id}>
+                              <button
+                                type='button'
+                                onClick={() => setSelectedId(person.id)}
+                                className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
+                                  isSelected
+                                    ? 'bg-[#0A84FF] text-white'
+                                    : 'text-ink hover:bg-black/5'
+                                }`}
+                              >
+                                <span
+                                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-[11px] font-semibold text-white ${
+                                    AVATAR_COLORS[
+                                      allPeople.findIndex(
+                                        (p) => p.id === person.id,
+                                      ) % AVATAR_COLORS.length
+                                    ]
+                                  } ${isSelected ? 'ring-2 ring-white/70' : ''}`}
+                                >
+                                  {person.name.slice(0, 1)}
+                                </span>
+                                <span className='truncate'>{person.name}</span>
+                              </button>
+                            </li>
+                          )
+                        })}
                       </ul>
                     </div>
                   ))}
