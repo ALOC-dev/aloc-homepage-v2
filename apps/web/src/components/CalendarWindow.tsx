@@ -102,8 +102,8 @@ export default function CalendarWindow({
       aria-label='알록일정'
       className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)] transition-[height,max-width] duration-300 ease-out ${
         maximized
-          ? 'h-[min(900px,90vh)] max-w-[1400px]'
-          : 'h-[min(600px,80vh)] max-w-4xl'
+          ? 'h-[min(950px,94vh)] max-w-[1400px]'
+          : 'h-[min(830px,88vh)] max-w-[1360px]'
       }`}
     >
       <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>

@@ -81,12 +81,13 @@ export default function Home() {
           minimized={minimized}
           onMinimize={() => setMinimized(true)}
           widthClass={
-            openItem.id === 'projects' ||
-            openItem.id === 'archive' ||
-            openItem.id === 'photos' ||
             openItem.id === 'schedule'
-              ? 'max-w-4xl'
-              : 'max-w-sm'
+              ? 'max-w-[1360px]'
+              : openItem.id === 'projects' ||
+                  openItem.id === 'archive' ||
+                  openItem.id === 'photos'
+                ? 'max-w-4xl'
+                : 'max-w-sm'
           }
         >
           {({ close, minimize, toggleMaximize, maximized }) => {
