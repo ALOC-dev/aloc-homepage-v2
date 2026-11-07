@@ -54,7 +54,7 @@ export default function PhotoWindow() {
   })
 
   function handlePointerDown(e: ReactPointerEvent<HTMLElement>) {
-    if (!sectionRef.current) return
+    if (maximized || !sectionRef.current) return
     e.currentTarget.setPointerCapture(e.pointerId)
     dragStart.current = {
       x: e.clientX,
@@ -103,7 +103,9 @@ export default function PhotoWindow() {
       }}
     >
       <header
-        className='flex cursor-grab items-center gap-4 border-b border-black/5 px-4 py-3 select-none active:cursor-grabbing'
+        className={`flex items-center gap-4 border-b border-black/5 px-4 py-3 select-none ${
+          maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+        }`}
         style={{ touchAction: 'none' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

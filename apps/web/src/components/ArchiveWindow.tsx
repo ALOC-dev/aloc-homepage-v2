@@ -83,7 +83,9 @@ export default function ArchiveWindow({
 
         <div
           data-drag-handle
-          className='min-w-0 flex-1 cursor-grab touch-none py-1 select-none active:cursor-grabbing'
+          className={`min-w-0 flex-1 touch-none py-1 select-none ${
+            maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+          }`}
         >
           <p className='truncate font-display text-sm font-semibold text-ink'>
             {selectedSource.title || '아카이브'}

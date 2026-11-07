@@ -29,7 +29,9 @@ export default function PlaceholderWindow({
         />
         <p
           data-drag-handle
-          className='ml-2 min-w-0 flex-1 cursor-grab touch-none truncate py-1 font-display text-sm font-semibold text-muted select-none active:cursor-grabbing'
+          className={`ml-2 min-w-0 flex-1 touch-none truncate py-1 font-display text-sm font-semibold text-muted select-none ${
+            maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+          }`}
         >
           {item.label}
         </p>

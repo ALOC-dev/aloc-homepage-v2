@@ -77,6 +77,7 @@ export default function AppWindow({
   }
 
   function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+    if (maximized) return
     const target = e.target as HTMLElement
     if (!target.closest('[data-drag-handle]')) return
     e.currentTarget.setPointerCapture(e.pointerId)
