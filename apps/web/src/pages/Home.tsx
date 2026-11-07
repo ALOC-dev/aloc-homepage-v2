@@ -12,6 +12,7 @@ import PhotoPreviewWindow, {
 import PhotosAppWindow from '../components/PhotosAppWindow'
 import PhotoWindow from '../components/PhotoWindow'
 import PlaceholderWindow from '../components/PlaceholderWindow'
+import ProfileWindow from '../components/ProfileWindow'
 import { DOCK_ITEMS } from '../dockItems'
 
 export default function Home() {
@@ -85,7 +86,8 @@ export default function Home() {
               ? 'max-w-[1360px]'
               : openItem.id === 'projects' ||
                   openItem.id === 'archive' ||
-                  openItem.id === 'photos'
+                  openItem.id === 'photos' ||
+                  openItem.id === 'profile'
                 ? 'max-w-4xl'
                 : 'max-w-sm'
           }
@@ -125,6 +127,16 @@ export default function Home() {
             if (openItem.id === 'schedule') {
               return (
                 <CalendarWindow
+                  onClose={close}
+                  onMinimize={minimize}
+                  onToggleMaximize={toggleMaximize}
+                  maximized={maximized}
+                />
+              )
+            }
+            if (openItem.id === 'profile') {
+              return (
+                <ProfileWindow
                   onClose={close}
                   onMinimize={minimize}
                   onToggleMaximize={toggleMaximize}
