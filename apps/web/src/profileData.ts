@@ -4,6 +4,9 @@ export type ProfilePerson = {
   generation: string
   bio?: string
   githubUrl?: string
+  discordUrl?: string
+  projects?: string[]
+  competitions?: string[]
 }
 
 export type ProfileGeneration = {
