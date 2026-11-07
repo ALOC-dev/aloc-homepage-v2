@@ -5,6 +5,9 @@ import Dock from '../components/Dock'
 import FinderWindow from '../components/FinderWindow'
 import MenuBar from '../components/MenuBar'
 import NoticeAlert from '../components/NoticeAlert'
+import PhotoPreviewWindow, {
+  type PreviewPhoto,
+} from '../components/PhotoPreviewWindow'
 import PhotosAppWindow from '../components/PhotosAppWindow'
 import PhotoWindow from '../components/PhotoWindow'
 import PlaceholderWindow from '../components/PlaceholderWindow'
@@ -13,6 +16,7 @@ import { DOCK_ITEMS } from '../dockItems'
 export default function Home() {
   const [openId, setOpenId] = useState<string | null>(null)
   const [minimized, setMinimized] = useState(false)
+  const [previewPhoto, setPreviewPhoto] = useState<PreviewPhoto | null>(null)
   const openItem = DOCK_ITEMS.find((item) => item.id === openId)
 
   function handleSelect(id: string) {
@@ -48,10 +52,18 @@ export default function Home() {
 
       <main className='relative z-10 flex flex-1 items-center justify-center px-6 pt-14 pb-32'>
         <div className='flex w-full max-w-4xl flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-center'>
-          <PhotoWindow />
+          <PhotoWindow onOpenPhoto={setPreviewPhoto} />
           <NoticeAlert />
         </div>
       </main>
+
+      {previewPhoto && (
+        <PhotoPreviewWindow
+          key={previewPhoto.fileName}
+          photo={previewPhoto}
+          onClose={() => setPreviewPhoto(null)}
+        />
+      )}
 
       {openItem && (
         <AppWindow
