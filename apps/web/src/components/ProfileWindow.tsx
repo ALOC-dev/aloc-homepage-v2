@@ -106,6 +106,8 @@ const SHARED_GROUPS: {
   },
 ]
 
+const GENERATION_ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th']
+
 export default function ProfileWindow({
   onClose,
   onMinimize,
@@ -229,19 +231,22 @@ export default function ProfileWindow({
                 iCloud
               </p>
               <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
-                {generationGroups.map((gen) => (
-                  <GroupRow
-                    key={gen.id}
-                    item={{
-                      icon: Users,
-                      color: 'bg-[#0A84FF]',
-                      label: gen.label,
-                      count: gen.people.length,
-                    }}
-                    active={selectedGroup === gen.id}
-                    onClick={() => handleSelectGroup(gen.id)}
-                  />
-                ))}
+                {generationGroups.map((gen) => {
+                  const genNumber = PROFILE_GENERATIONS.indexOf(gen) + 1
+                  return (
+                    <GroupRow
+                      key={gen.id}
+                      item={{
+                        icon: Users,
+                        color: 'bg-[#0A84FF]',
+                        label: GENERATION_ORDINALS[genNumber - 1] ?? gen.label,
+                        count: gen.people.length,
+                      }}
+                      active={selectedGroup === gen.id}
+                      onClick={() => handleSelectGroup(gen.id)}
+                    />
+                  )
+                })}
               </ul>
 
               <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
