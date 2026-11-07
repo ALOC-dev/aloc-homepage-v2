@@ -96,57 +96,117 @@ export default function PhotosAppWindow({
           <PanelLeft className='h-[18px] w-[18px]' strokeWidth={1.75} />
         </button>
 
-        <div
-          data-drag-handle
-          className={`min-w-0 flex-1 touch-none py-1 select-none ${
-            maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
-          }`}
-        >
-          <p className='truncate font-display text-sm font-semibold text-ink'>
-            보관함
-          </p>
-          <p className='truncate text-[11px] text-muted'>
-            ALOC와 함께한 순간들
-          </p>
-        </div>
+        {selectedPhoto ? (
+          <>
+            <button
+              type='button'
+              onClick={() => setSelectedPhotoId(null)}
+              className='rounded-md p-1 text-muted hover:bg-black/5'
+              aria-label='뒤로'
+            >
+              <ChevronLeft className='h-5 w-5' strokeWidth={2} />
+            </button>
 
-        <div className='hidden items-center gap-0.5 rounded-md bg-black/5 p-0.5 text-[11px] font-medium text-muted sm:flex'>
-          <button
-            type='button'
-            onClick={() => setView('year')}
-            className={`rounded px-2 py-1 transition-colors ${view === 'year' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
-          >
-            년
-          </button>
-          <button
-            type='button'
-            onClick={() => setView('month')}
-            className={`rounded px-2 py-1 transition-colors ${view === 'month' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
-          >
-            월
-          </button>
-          <button
-            type='button'
-            onClick={() => setView('all')}
-            className={`rounded px-2 py-1 transition-colors ${view === 'all' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
-          >
-            모든 사진
-          </button>
-        </div>
+            <div className='hidden items-center gap-1.5 text-muted sm:flex'>
+              <Minus className='h-3.5 w-3.5' strokeWidth={2} />
+              <input
+                type='range'
+                defaultValue={50}
+                readOnly
+                className='h-1 w-20 accent-[#0A84FF]'
+              />
+              <Plus className='h-3.5 w-3.5' strokeWidth={2} />
+            </div>
 
-        <div className='hidden items-center gap-2.5 text-muted md:flex'>
-          <Info className='h-4 w-4' strokeWidth={1.75} />
-          <Share className='h-4 w-4' strokeWidth={1.75} />
-          <Heart className='h-4 w-4' strokeWidth={1.75} />
-        </div>
+            <div
+              data-drag-handle
+              className={`min-w-0 flex-1 touch-none py-1 text-center select-none ${
+                maximized
+                  ? 'cursor-default'
+                  : 'cursor-grab active:cursor-grabbing'
+              }`}
+            >
+              <p className='truncate text-sm font-semibold text-ink'>
+                {selectedPhoto.caption}
+              </p>
+              <p className='truncate text-[11px] text-muted'>
+                {PHOTOS.findIndex((p) => p.id === selectedPhoto.id) + 1}/
+                {PHOTOS.length}
+              </p>
+            </div>
 
-        <div className='flex items-center gap-1.5 rounded-md bg-black/5 px-2 py-1 text-muted'>
-          <Search className='h-3.5 w-3.5' strokeWidth={2} />
-          <input
-            placeholder='검색'
-            className='w-20 bg-transparent text-xs text-ink placeholder:text-muted focus:outline-none'
-          />
-        </div>
+            <div className='hidden items-center gap-3 text-muted md:flex'>
+              <Info className='h-4 w-4' strokeWidth={1.75} />
+              <Share className='h-4 w-4' strokeWidth={1.75} />
+              <Heart className='h-4 w-4' strokeWidth={1.75} />
+              <Crop className='h-4 w-4' strokeWidth={1.75} />
+              <Wand2 className='h-4 w-4' strokeWidth={1.75} />
+            </div>
+
+            <button
+              type='button'
+              className='rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-ink hover:bg-black/10'
+            >
+              편집
+            </button>
+          </>
+        ) : (
+          <>
+            <div
+              data-drag-handle
+              className={`min-w-0 flex-1 touch-none py-1 select-none ${
+                maximized
+                  ? 'cursor-default'
+                  : 'cursor-grab active:cursor-grabbing'
+              }`}
+            >
+              <p className='truncate font-display text-sm font-semibold text-ink'>
+                보관함
+              </p>
+              <p className='truncate text-[11px] text-muted'>
+                ALOC와 함께한 순간들
+              </p>
+            </div>
+
+            <div className='hidden items-center gap-0.5 rounded-md bg-black/5 p-0.5 text-[11px] font-medium text-muted sm:flex'>
+              <button
+                type='button'
+                onClick={() => setView('year')}
+                className={`rounded px-2 py-1 transition-colors ${view === 'year' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
+              >
+                년
+              </button>
+              <button
+                type='button'
+                onClick={() => setView('month')}
+                className={`rounded px-2 py-1 transition-colors ${view === 'month' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
+              >
+                월
+              </button>
+              <button
+                type='button'
+                onClick={() => setView('all')}
+                className={`rounded px-2 py-1 transition-colors ${view === 'all' ? 'bg-white text-ink shadow-sm' : 'hover:text-ink'}`}
+              >
+                모든 사진
+              </button>
+            </div>
+
+            <div className='hidden items-center gap-2.5 text-muted md:flex'>
+              <Info className='h-4 w-4' strokeWidth={1.75} />
+              <Share className='h-4 w-4' strokeWidth={1.75} />
+              <Heart className='h-4 w-4' strokeWidth={1.75} />
+            </div>
+
+            <div className='flex items-center gap-1.5 rounded-md bg-black/5 px-2 py-1 text-muted'>
+              <Search className='h-3.5 w-3.5' strokeWidth={2} />
+              <input
+                placeholder='검색'
+                className='w-20 bg-transparent text-xs text-ink placeholder:text-muted focus:outline-none'
+              />
+            </div>
+          </>
+        )}
       </header>
 
       <div className='flex min-h-0 flex-1'>
@@ -175,62 +235,13 @@ export default function PhotosAppWindow({
 
         <div className='flex min-h-0 flex-1 flex-col overflow-y-auto'>
           {selectedPhoto ? (
-            <div className='flex min-h-0 flex-1 flex-col'>
-              <div className='flex items-center gap-3 border-b border-black/5 px-4 py-2'>
-                <button
-                  type='button'
-                  onClick={() => setSelectedPhotoId(null)}
-                  className='rounded-md p-1 text-muted hover:bg-black/5'
-                  aria-label='뒤로'
-                >
-                  <ChevronLeft className='h-5 w-5' strokeWidth={2} />
-                </button>
-
-                <div className='hidden items-center gap-1.5 text-muted sm:flex'>
-                  <Minus className='h-3.5 w-3.5' strokeWidth={2} />
-                  <input
-                    type='range'
-                    defaultValue={50}
-                    readOnly
-                    className='h-1 w-20 accent-[#0A84FF]'
-                  />
-                  <Plus className='h-3.5 w-3.5' strokeWidth={2} />
-                </div>
-
-                <div className='min-w-0 flex-1 text-center'>
-                  <p className='truncate text-sm font-semibold text-ink'>
-                    {selectedPhoto.caption}
-                  </p>
-                  <p className='truncate text-[11px] text-muted'>
-                    {PHOTOS.findIndex((p) => p.id === selectedPhoto.id) + 1}/
-                    {PHOTOS.length}
-                  </p>
-                </div>
-
-                <div className='hidden items-center gap-3 text-muted md:flex'>
-                  <Info className='h-4 w-4' strokeWidth={1.75} />
-                  <Share className='h-4 w-4' strokeWidth={1.75} />
-                  <Heart className='h-4 w-4' strokeWidth={1.75} />
-                  <Crop className='h-4 w-4' strokeWidth={1.75} />
-                  <Wand2 className='h-4 w-4' strokeWidth={1.75} />
-                </div>
-
-                <button
-                  type='button'
-                  className='rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-ink hover:bg-black/10'
-                >
-                  편집
-                </button>
-              </div>
-
-              <div className='flex min-h-0 flex-1 items-center justify-center bg-black/[0.03] p-5'>
-                <img
-                  src={selectedPhoto.src}
-                  alt={selectedPhoto.caption}
-                  draggable={false}
-                  className='max-h-full max-w-full rounded-lg object-contain shadow-[0_20px_40px_-12px_rgba(28,27,41,0.4)]'
-                />
-              </div>
+            <div className='flex min-h-0 flex-1 items-center justify-center bg-black/[0.03] p-5'>
+              <img
+                src={selectedPhoto.src}
+                alt={selectedPhoto.caption}
+                draggable={false}
+                className='max-h-full max-w-full rounded-lg object-contain shadow-[0_20px_40px_-12px_rgba(28,27,41,0.4)]'
+              />
             </div>
           ) : (
             <div className='p-5'>

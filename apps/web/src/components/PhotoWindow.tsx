@@ -119,50 +119,51 @@ export default function PhotoWindow() {
           onMinimize={() => setCollapsed((v) => !v)}
           onToggleMaximize={() => setMaximized((v) => !v)}
         />
-        <p className='font-display text-sm font-semibold text-muted'>사진</p>
+        {selectedPhoto ? (
+          <>
+            <button
+              type='button'
+              onClick={() => setSelectedPhotoId(null)}
+              className='rounded-md p-0.5 text-muted hover:bg-black/5'
+              aria-label='뒤로'
+            >
+              <ChevronLeft className='h-4 w-4' strokeWidth={2} />
+            </button>
+            <div className='min-w-0 flex-1 text-center'>
+              <p className='truncate text-xs font-semibold text-ink'>
+                {selectedPhoto.caption}
+              </p>
+              <p className='truncate text-[10px] text-muted'>
+                {PHOTOS.findIndex((p) => p.id === selectedPhoto.id) + 1}/
+                {PHOTOS.length}
+              </p>
+            </div>
+            <Heart className='h-3.5 w-3.5 text-muted' strokeWidth={1.75} />
+            <button
+              type='button'
+              className='rounded-full bg-black/5 px-2 py-0.5 text-[10px] font-medium text-ink hover:bg-black/10'
+            >
+              편집
+            </button>
+          </>
+        ) : (
+          <p className='font-display text-sm font-semibold text-muted'>사진</p>
+        )}
       </header>
 
       {!collapsed &&
         (selectedPhoto ? (
-          <div className='flex flex-col'>
-            <div className='flex items-center gap-2 border-b border-black/5 px-3 py-1.5'>
-              <button
-                type='button'
-                onClick={() => setSelectedPhotoId(null)}
-                className='rounded-md p-0.5 text-muted hover:bg-black/5'
-                aria-label='뒤로'
-              >
-                <ChevronLeft className='h-4 w-4' strokeWidth={2} />
-              </button>
-              <div className='min-w-0 flex-1 text-center'>
-                <p className='truncate text-xs font-semibold text-ink'>
-                  {selectedPhoto.caption}
-                </p>
-                <p className='truncate text-[10px] text-muted'>
-                  {PHOTOS.findIndex((p) => p.id === selectedPhoto.id) + 1}/
-                  {PHOTOS.length}
-                </p>
-              </div>
-              <Heart className='h-3.5 w-3.5 text-muted' strokeWidth={1.75} />
-              <button
-                type='button'
-                className='rounded-full bg-black/5 px-2 py-0.5 text-[10px] font-medium text-ink hover:bg-black/10'
-              >
-                편집
-              </button>
-            </div>
-            <div
-              className={`flex items-center justify-center overflow-hidden bg-black/5 p-3 transition-[height] duration-300 ease-out ${
-                maximized ? 'h-80' : 'h-56'
-              }`}
-            >
-              <img
-                src={selectedPhoto.src}
-                alt={selectedPhoto.caption}
-                draggable={false}
-                className='max-h-full max-w-full rounded-lg object-contain'
-              />
-            </div>
+          <div
+            className={`flex items-center justify-center overflow-hidden bg-black/5 p-3 transition-[height] duration-300 ease-out ${
+              maximized ? 'h-80' : 'h-56'
+            }`}
+          >
+            <img
+              src={selectedPhoto.src}
+              alt={selectedPhoto.caption}
+              draggable={false}
+              className='max-h-full max-w-full rounded-lg object-contain'
+            />
           </div>
         ) : (
           <div
