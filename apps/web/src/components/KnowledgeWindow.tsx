@@ -3,7 +3,7 @@ import TrafficLights from './TrafficLights'
 
 function SlideThumbnail({ title }: { title: string }) {
   return (
-    <div className='flex aspect-[4/3] flex-col overflow-hidden rounded-md border border-black/10 bg-white p-3 shadow-sm'>
+    <div className='flex aspect-[4/3] flex-col overflow-hidden rounded-md border border-black/10 bg-white p-3 shadow-sm transition-shadow group-hover:shadow-md'>
       <div className='h-1 w-10 rounded-full bg-black/10' />
       <div className='flex flex-1 flex-col items-center justify-center gap-1.5 px-2 text-center'>
         <p className='line-clamp-2 text-[10px] font-semibold text-ink'>
@@ -73,12 +73,18 @@ export default function KnowledgeWindow({
                 </h2>
                 <div className='grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-x-6 gap-y-5'>
                   {gen.talks.map((talk) => (
-                    <div key={talk.id} className='flex flex-col gap-2'>
+                    <a
+                      key={talk.id}
+                      href={`/presentations/${talk.id}.pdf`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='group flex cursor-pointer flex-col gap-2 rounded-lg p-1 -m-1 transition-colors hover:bg-black/5'
+                    >
                       <SlideThumbnail title={talk.title} />
-                      <p className='line-clamp-2 text-sm font-medium text-ink'>
+                      <p className='line-clamp-2 text-sm font-medium text-ink group-hover:text-[#0A84FF]'>
                         {talk.title}
                       </p>
-                    </div>
+                    </a>
                   ))}
                 </div>
               </section>
