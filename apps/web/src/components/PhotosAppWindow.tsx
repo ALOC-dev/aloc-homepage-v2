@@ -1,26 +1,18 @@
 import {
   ChevronLeft,
   Clock,
-  Copy,
   Crop,
   Heart,
+  History,
   Image as ImageIcon,
   Images,
   Info,
-  Map as MapIcon,
-  MessageCircle,
   Minus,
   PanelLeft,
-  PenLine,
   Plus,
-  Receipt,
   Search,
   Share,
-  Share2,
-  Shapes,
-  Trash2,
-  User,
-  Video,
+  Sparkles,
   Wand2,
   type LucideIcon,
 } from 'lucide-react'
@@ -57,24 +49,8 @@ const PHOTOS: Photo[] = [
 const PINNED_ITEMS: { icon: LucideIcon; label: string }[] = [
   { icon: Heart, label: '즐겨찾기' },
   { icon: Clock, label: '최근 저장된 항목' },
-  { icon: MapIcon, label: '지도' },
-  { icon: Video, label: '비디오' },
-  { icon: ImageIcon, label: '스크린샷' },
-  { icon: User, label: '사람들' },
-  { icon: Trash2, label: '최근 삭제된 항목' },
-]
-
-const SHARED_ITEMS: { icon: LucideIcon; label: string }[] = [
-  { icon: Share2, label: '공유 앨범' },
-  { icon: MessageCircle, label: '활동' },
-]
-
-const OTHER_ITEMS: { icon: LucideIcon; label: string }[] = [
-  { icon: Trash2, label: '최근 삭제된 항목' },
-  { icon: Copy, label: '중복된 항목' },
-  { icon: Receipt, label: '영수증' },
-  { icon: PenLine, label: '손글씨' },
-  { icon: Shapes, label: '일러스트레이션' },
+  { icon: History, label: '이전 알록사진' },
+  { icon: Sparkles, label: '현재 알록 사진' },
 ]
 
 export default function PhotosAppWindow({
@@ -194,8 +170,6 @@ export default function PhotosAppWindow({
             </div>
 
             <SidebarGroup label='고정됨' items={PINNED_ITEMS} />
-            <SidebarGroup label='공유' items={SHARED_ITEMS} />
-            <SidebarGroup label='기타' items={OTHER_ITEMS} />
           </nav>
         )}
 
