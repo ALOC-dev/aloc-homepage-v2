@@ -1,14 +1,25 @@
 import {
+  Archive,
+  Building2,
+  CalendarDays,
+  Clock,
   FolderGit2,
+  Home,
+  Inbox,
   Info,
   PanelLeft,
   Plus,
   Search,
+  Star,
+  Trash2,
   Trophy,
+  User,
+  Users,
+  Waves,
   type LucideIcon,
 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
-import { PROFILE_GENERATIONS } from '../profileData'
+import { PROFILE_GENERATIONS, type ProfilePerson } from '../profileData'
 import TrafficLights from './TrafficLights'
 
 function GithubIcon({ className }: { className?: string }) {
@@ -35,6 +46,92 @@ const AVATAR_COLORS = [
   'bg-[#FF375F]',
 ]
 
+const QUICK_FILTERS: {
+  id: string
+  icon: LucideIcon
+  color: string
+  label: string
+  count: number
+}[] = [
+  {
+    id: 'siri',
+    icon: Inbox,
+    color: 'bg-[#0A84FF]',
+    label: 'Siri 제안',
+    count: 4,
+  },
+  {
+    id: 'recents',
+    icon: Clock,
+    color: 'bg-[#FF375F]',
+    label: '최근 항목',
+    count: 5,
+  },
+  {
+    id: 'favorites',
+    icon: Star,
+    color: 'bg-[#FF9F0A]',
+    label: '즐겨찾기',
+    count: 3,
+  },
+  {
+    id: 'events',
+    icon: CalendarDays,
+    color: 'bg-[#FF375F]',
+    label: '예정된 일정',
+    count: 1,
+  },
+]
+
+const ICLOUD_GROUPS: {
+  id: string
+  icon: LucideIcon
+  color: string
+  label: string
+  count: number
+}[] = [
+  {
+    id: 'friends',
+    icon: User,
+    color: 'bg-[#FF375F]',
+    label: '친구',
+    count: 24,
+  },
+  { id: 'family', icon: Home, color: 'bg-[#FF9F0A]', label: '가족', count: 13 },
+  {
+    id: 'business',
+    icon: Building2,
+    color: 'bg-[#0A84FF]',
+    label: '비즈니스',
+    count: 13,
+  },
+]
+
+const SHARED_GROUPS: {
+  id: string
+  icon: LucideIcon
+  color: string
+  label: string
+  count: number
+  subscribed?: boolean
+}[] = [
+  {
+    id: 'work',
+    icon: Inbox,
+    color: 'bg-[#0A84FF]',
+    label: '업무',
+    count: 5,
+    subscribed: true,
+  },
+  {
+    id: 'shared-family',
+    icon: Users,
+    color: 'bg-[#FF375F]',
+    label: '공유 가족',
+    count: 36,
+  },
+]
+
 export default function ProfileWindow({
   onClose,
   onMinimize,
@@ -50,6 +147,7 @@ export default function ProfileWindow({
   const [selectedId, setSelectedId] = useState<string | null>(
     () => allPeople[0]?.id ?? null,
   )
+  const [selectedGroup, setSelectedGroup] = useState('friends')
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
@@ -57,12 +155,22 @@ export default function ProfileWindow({
 
   const selected = allPeople.find((p) => p.id === selectedId)
 
-  const filteredGenerations = PROFILE_GENERATIONS.map((gen) => ({
-    ...gen,
-    people: gen.people.filter((p) =>
-      p.name.toLowerCase().includes(query.trim().toLowerCase()),
-    ),
-  })).filter((gen) => gen.people.length > 0)
+  const filteredPeople = allPeople.filter((p) =>
+    p.name.toLowerCase().includes(query.trim().toLowerCase()),
+  )
+  const sortedPeople = [...filteredPeople].sort((a, b) =>
+    a.name.localeCompare(b.name, 'ko'),
+  )
+  const letterGroups: { letter: string; people: ProfilePerson[] }[] = []
+  for (const person of sortedPeople) {
+    const letter = person.name.charAt(0)
+    const lastGroup = letterGroups[letterGroups.length - 1]
+    if (lastGroup && lastGroup.letter === letter) {
+      lastGroup.people.push(person)
+    } else {
+      letterGroups.push({ letter, people: [person] })
+    }
+  }
 
   return (
     <section
@@ -104,7 +212,7 @@ export default function ProfileWindow({
 
       <div className='flex min-h-0 flex-1'>
         {sidebarOpen && (
-          <nav className='flex w-40 shrink-0 flex-col overflow-y-auto border-r border-black/5 bg-black/[0.03] sm:w-52'>
+          <nav className='flex w-48 shrink-0 flex-col overflow-y-auto border-r border-black/5 bg-black/[0.03] sm:w-56'>
             <div className='px-3 pt-3'>
               <div className='flex items-center gap-1.5 rounded-md bg-black/5 px-2 py-1.5 text-muted'>
                 <Search className='h-3.5 w-3.5 shrink-0' strokeWidth={2} />
@@ -116,59 +224,69 @@ export default function ProfileWindow({
                 />
               </div>
             </div>
-            <div className='flex-1 px-3 pt-3'>
-              {filteredGenerations.length === 0 ? (
-                <p className='px-2 text-[13px] text-muted'>
-                  검색 결과가 없어요.
-                </p>
-              ) : (
-                <div className='flex flex-col gap-4'>
-                  {filteredGenerations.map((gen) => (
-                    <div key={gen.id}>
-                      <div className='flex items-center justify-between px-2'>
-                        <p className='text-[11px] font-medium text-muted'>
-                          {gen.label}
-                        </p>
-                        <span className='text-[11px] text-muted'>
-                          {gen.people.length}
-                        </span>
-                      </div>
-                      <ul className='mt-1 flex flex-col gap-0.5'>
-                        {gen.people.map((person) => {
-                          const isSelected = selectedId === person.id
-                          return (
-                            <li key={person.id}>
-                              <button
-                                type='button'
-                                onClick={() => setSelectedId(person.id)}
-                                className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
-                                  isSelected
-                                    ? 'bg-[#0A84FF] text-white'
-                                    : 'text-ink hover:bg-black/5'
-                                }`}
-                              >
-                                <span
-                                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-[11px] font-semibold text-white ${
-                                    AVATAR_COLORS[
-                                      allPeople.findIndex(
-                                        (p) => p.id === person.id,
-                                      ) % AVATAR_COLORS.length
-                                    ]
-                                  } ${isSelected ? 'ring-2 ring-white/70' : ''}`}
-                                >
-                                  {person.name.slice(0, 1)}
-                                </span>
-                                <span className='truncate'>{person.name}</span>
-                              </button>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              )}
+
+            <div className='flex-1 px-3 pt-3 pb-2'>
+              <ul className='flex flex-col gap-0.5 border-b border-black/5 pb-2'>
+                {QUICK_FILTERS.map((item) => (
+                  <GroupRow
+                    key={item.id}
+                    item={item}
+                    active={selectedGroup === item.id}
+                    onClick={() => setSelectedGroup(item.id)}
+                  />
+                ))}
+              </ul>
+
+              <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
+                iCloud
+              </p>
+              <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
+                {ICLOUD_GROUPS.map((item) => (
+                  <GroupRow
+                    key={item.id}
+                    item={item}
+                    active={selectedGroup === item.id}
+                    onClick={() => setSelectedGroup(item.id)}
+                  />
+                ))}
+              </ul>
+
+              <p className='mt-2 px-2 text-[11px] font-medium text-muted'>
+                공유
+              </p>
+              <ul className='mt-1 flex flex-col gap-0.5 border-b border-black/5 pb-2'>
+                {SHARED_GROUPS.map((item) => (
+                  <GroupRow
+                    key={item.id}
+                    item={item}
+                    active={selectedGroup === item.id}
+                    onClick={() => setSelectedGroup(item.id)}
+                  />
+                ))}
+              </ul>
+
+              <ul className='mt-2 flex flex-col gap-0.5'>
+                <li>
+                  <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
+                    <Archive
+                      className='h-4 w-4 shrink-0 text-muted'
+                      strokeWidth={1.75}
+                    />
+                    보관함
+                  </span>
+                </li>
+                <li>
+                  <span className='flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] text-ink hover:bg-black/5'>
+                    <Trash2
+                      className='h-4 w-4 shrink-0 text-muted'
+                      strokeWidth={1.75}
+                    />
+                    휴지통
+                  </span>
+                </li>
+              </ul>
             </div>
+
             <button
               type='button'
               className='flex items-center gap-1.5 border-t border-black/5 px-4 py-2 text-xs text-muted hover:bg-black/5'
@@ -177,6 +295,53 @@ export default function ProfileWindow({
               <Plus className='h-3.5 w-3.5' strokeWidth={2} />
               멤버 추가
             </button>
+          </nav>
+        )}
+
+        {sidebarOpen && (
+          <nav className='flex w-44 shrink-0 flex-col gap-0.5 overflow-y-auto border-r border-black/5 px-2 py-3 sm:w-48'>
+            {letterGroups.length === 0 ? (
+              <p className='px-2 text-[13px] text-muted'>검색 결과가 없어요.</p>
+            ) : (
+              letterGroups.map((group) => (
+                <div key={group.letter}>
+                  <p className='border-b border-black/5 px-2 pb-1 text-[11px] text-muted'>
+                    {group.letter}
+                  </p>
+                  <ul className='mt-0.5 flex flex-col gap-0.5'>
+                    {group.people.map((person) => {
+                      const isSelected = selectedId === person.id
+                      return (
+                        <li key={person.id}>
+                          <button
+                            type='button'
+                            onClick={() => setSelectedId(person.id)}
+                            className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
+                              isSelected
+                                ? 'bg-black/[0.06] text-ink'
+                                : 'text-ink hover:bg-black/5'
+                            }`}
+                          >
+                            <span
+                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-[11px] font-semibold text-white ${
+                                AVATAR_COLORS[
+                                  allPeople.findIndex(
+                                    (p) => p.id === person.id,
+                                  ) % AVATAR_COLORS.length
+                                ]
+                              }`}
+                            >
+                              {person.name.slice(0, 1)}
+                            </span>
+                            <span className='truncate'>{person.name}</span>
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              ))
+            )}
           </nav>
         )}
 
@@ -294,6 +459,44 @@ export default function ProfileWindow({
         </div>
       </div>
     </section>
+  )
+}
+
+function GroupRow({
+  item,
+  active,
+  onClick,
+}: {
+  item: {
+    icon: LucideIcon
+    color: string
+    label: string
+    count: number
+    subscribed?: boolean
+  }
+  active: boolean
+  onClick: () => void
+}) {
+  const Icon = item.icon
+  return (
+    <li>
+      <button
+        type='button'
+        onClick={onClick}
+        className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
+          active ? 'bg-black/[0.06] text-ink' : 'text-ink hover:bg-black/5'
+        }`}
+      >
+        <span
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${item.color}`}
+        >
+          <Icon className='h-3 w-3 text-white' strokeWidth={2.5} />
+        </span>
+        <span className='min-w-0 flex-1 truncate'>{item.label}</span>
+        {item.subscribed && <Waves className='h-3 w-3 shrink-0 text-muted' />}
+        <span className='shrink-0 text-[11px] text-muted'>{item.count}</span>
+      </button>
+    </li>
   )
 }
 
