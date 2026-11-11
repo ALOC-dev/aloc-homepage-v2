@@ -1,0 +1,52 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #17181c;
+}
+
+.macbook-image {
+  width: min(85vw, 1100px);
+  opacity: 0;
+  transform: scale(0.94);
+
+  animation: macbookAppear 1.5s ease forwards;
+
+  transition:
+    transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.macbook-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.zooming .macbook-image {
+  transform: scale(1.4);
+}
+
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  background: #17181c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.fading .intro-overlay {
+  opacity: 1;
+}
+
+@keyframes macbookAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

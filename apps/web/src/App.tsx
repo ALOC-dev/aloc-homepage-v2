@@ -1,14 +1,26 @@
+import { useState } from 'react'
+import MacbookIntro from './components/MacbookIntro'
+import LockScreen from './components/LockScreen'
+import Desktop from './components/Desktop'
+
+type Screen = 'intro' | 'lock' | 'desktop'
+
 function App() {
-  return (
-    <main className='flex min-h-screen flex-col items-center justify-center gap-2 bg-white dark:bg-neutral-900'>
-      <h1 className='text-3xl font-semibold text-neutral-900 dark:text-white'>
-        ALOC Homepage
-      </h1>
-      <p className='text-neutral-500 dark:text-neutral-400'>
-        Vite + React + TypeScript + Tailwind CSS
-      </p>
-    </main>
-  )
+  const [screen, setScreen] = useState<Screen>('intro')
+
+  if (screen === 'intro') {
+    return (
+      <MacbookIntro onComplete={() => setScreen('lock')} />
+    )
+  }
+
+  if (screen === 'lock') {
+    return (
+      <LockScreen onLogin={() => setScreen('desktop')} />
+    )
+  }
+
+  return <Desktop />
 }
 
 export default App
