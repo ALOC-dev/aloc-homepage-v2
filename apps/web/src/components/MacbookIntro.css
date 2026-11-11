@@ -1,52 +1,81 @@
-.intro {
+.macbook-intro {
   position: fixed;
   inset: 0;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: #17181c;
+  opacity: 1;
+  transition: opacity 0.7s ease;
 }
 
-.macbook-image {
-  width: min(85vw, 1100px);
+.macbook-intro--fading {
   opacity: 0;
-  transform: scale(0.94);
-
-  animation: macbookAppear 1.5s ease forwards;
-
-  transition:
-    transform 3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.macbook-image img {
+.macbook-intro__image {
+  position: relative;
+  width: min(75vw, 850px, 127.5vh);
+  aspect-ratio: 3 / 2;
+  perspective: 1600px;
+  perspective-origin: 50% 85.9375%;
+  opacity: 0;
+  transform: translateY(35px);
+  transition:
+    opacity 1s ease,
+    transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.macbook-intro__image--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.macbook-intro__image svg {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
-.zooming .macbook-image {
-  transform: scale(1.4);
-}
-
-.intro-overlay {
+.macbook-intro__image .macbook-intro__lid {
   position: absolute;
   inset: 0;
-  background: #17181c;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.8s ease;
+  /* The hinge is at y=880 in the original 1024px-high image. */
+  transform-origin: 50% 85.9375%;
+  /* Closed toward the viewer, then lifted away around the hinge. */
+  transform: rotateX(-90deg);
+  backface-visibility: hidden;
+  transition: transform 2.8s cubic-bezier(0.45, 0, 0.25, 1) 0.8s;
 }
 
-.fading .intro-overlay {
-  opacity: 1;
+.macbook-intro__image--visible .macbook-intro__lid {
+  transform: rotateX(0deg);
 }
 
-@keyframes macbookAppear {
-  from {
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .macbook-intro__image,
+  .macbook-intro__image .macbook-intro__lid {
+    transform: none;
+    transition: opacity 0.3s ease;
   }
-  to {
-    opacity: 1;
-  }
+}
+
+.macbook-intro__display {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 112px;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  text-shadow: 0 3px 24px #62427818;
+}
+
+.macbook-intro__brand-dot {
+  color: #ffcfb4;
 }

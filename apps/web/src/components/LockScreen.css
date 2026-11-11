@@ -1,0 +1,272 @@
+.lock-screen {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  animation: lockScreenAppear 0.65s ease both;
+}
+.lock-screen__header {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 30px;
+}
+.lock-screen__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.lock-screen__orb {
+  position: relative;
+  display: block;
+  width: 27px;
+  height: 27px;
+  overflow: hidden;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 32% 16%, #f0fbff 0% 22%, transparent 24%),
+    conic-gradient(
+      from 210deg,
+      #3692ed,
+      #4bd4d7,
+      #edf8ff,
+      #ffc950,
+      #ff996b,
+      #b36bcd,
+      #6262c9,
+      #3692ed
+    );
+  box-shadow:
+    inset -3px -4px 6px #40348b45,
+    0 2px 5px #53447620;
+}
+.lock-screen__orb::after {
+  position: absolute;
+  inset: 20% -12% 24%;
+  border-bottom: 4px solid #fff7;
+  border-radius: 50%;
+  content: '';
+  transform: rotate(-17deg);
+}
+.lock-screen__status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  opacity: 0.85;
+}
+.lock-screen svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lock-screen__clock {
+  position: absolute;
+  top: 64px;
+  text-align: center;
+  text-shadow: 0 3px 24px #62427818;
+}
+.lock-screen__clock p {
+  margin: 0;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+.lock-screen__clock time {
+  display: block;
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+.lock-screen__login {
+  display: flex;
+  position: relative;
+  width: min(300px, calc(100vw - 48px));
+  flex-direction: column;
+  align-items: center;
+  margin-top: max(228px, calc(50svh - 45px));
+  text-align: center;
+}
+.lock-screen__avatar {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  margin-top: 12px;
+  place-items: center;
+  border: 1px solid #fff8;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffffff5c, #ffffff1a);
+  box-shadow:
+    0 10px 35px #54396c20,
+    inset 0 1px 1px #fff5;
+  backdrop-filter: blur(20px);
+}
+.lock-screen__orb--avatar {
+  width: 36px;
+  height: 36px;
+}
+.lock-screen__login h1 {
+  margin: 16px 0 0;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.lock-screen__tagline {
+  order: 1;
+  margin: 12px 0 0;
+  color: #ffffffe0;
+  font-size: 13px;
+  letter-spacing: -0.025em;
+}
+.lock-screen__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 16px;
+}
+.lock-screen__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 4px 6px 4px 16px;
+  border: 1px solid #fff6;
+  border-radius: 25px;
+  background: #ffffff26;
+  box-shadow:
+    0 6px 20px #533d6410,
+    inset 0 1px #ffffff1a;
+  backdrop-filter: blur(24px);
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.lock-screen__input-wrap:focus-within {
+  background: #ffffff36;
+  box-shadow: 0 0 0 3px #ffffff30;
+}
+.lock-screen__input-wrap input {
+  width: 100%;
+  min-width: 0;
+  height: 33px;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 16px;
+}
+.lock-screen__input-wrap input::placeholder {
+  color: #ffffffc4;
+}
+.lock-screen__input-wrap .lock-screen__password-toggle {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.lock-screen__input-wrap button:hover:not(:disabled) {
+  background: #ffffff60;
+}
+.lock-screen__input-wrap button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+.lock-screen__input-wrap button svg {
+  width: 18px;
+  height: 18px;
+}
+.lock-screen__submit {
+  display: block;
+  width: 100%;
+  height: 42px;
+  border: 1px solid #ffffff80;
+  border-radius: 25px;
+  background: #ffffff38;
+  color: white;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  backdrop-filter: blur(24px);
+  transition: background 0.2s;
+}
+.lock-screen__submit:hover {
+  background: #ffffff55;
+}
+.lock-screen__submit:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
+}
+.lock-screen__input-wrap:has(input[aria-invalid='true']) {
+  border-color: #ffe2dc;
+}
+.lock-screen__error {
+  min-height: 18px;
+  margin: 0;
+  color: #fff0eb;
+  font-size: 12px;
+  line-height: 18px;
+}
+.lock-screen__footer {
+  display: flex;
+  margin-top: auto;
+  padding: 28px 16px 27px;
+  align-items: center;
+  gap: 7px;
+  color: #ffffffb8;
+  font-size: 11px;
+}
+.lock-screen__footer svg {
+  width: 14px;
+  height: 14px;
+}
+.lock-screen__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@keyframes lockScreenAppear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 600px) {
+  .lock-screen__header {
+    padding: 18px 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lock-screen {
+    animation: none;
+  }
+}

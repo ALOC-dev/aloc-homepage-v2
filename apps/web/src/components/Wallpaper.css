@@ -1,0 +1,7 @@
+.aloc-wallpaper {
+  background:
+    radial-gradient(ellipse at 13% 16%, #d3a5fa 0%, transparent 47%),
+    radial-gradient(ellipse at 88% 7%, #edc9be 0%, transparent 44%),
+    radial-gradient(ellipse at 82% 94%, #ffb39f 0%, transparent 51%),
+    linear-gradient(135deg, #a38ac2 5%, #7950a5 48%, #ba83a9 78%, #e9a5ac);
+}
