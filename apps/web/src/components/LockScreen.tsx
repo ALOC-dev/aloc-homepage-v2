@@ -50,7 +50,11 @@ function LockScreen({ onLogin }: LockScreenProps) {
     <main className='lock-screen aloc-wallpaper'>
       <header className='lock-screen__header'>
         <div className='lock-screen__brand'>
-          <span className='lock-screen__orb' aria-hidden='true' />
+          <img
+            className='lock-screen__orb'
+            src='/images/aloc-symbol.png'
+            alt=''
+          />
           <span>ALOC</span>
         </div>
         <span className='lock-screen__status' aria-hidden='true'>
@@ -82,10 +86,13 @@ function LockScreen({ onLogin }: LockScreenProps) {
         aria-labelledby='lock-screen-user'
       >
         <div className='lock-screen__avatar' aria-hidden='true'>
-          <span className='lock-screen__orb lock-screen__orb--avatar' />
+          <img
+            className='lock-screen__orb lock-screen__orb--avatar'
+            src='/images/aloc-symbol.png'
+            alt=''
+          />
         </div>
         <h1 id='lock-screen-user'>ALOC</h1>
-        <p className='lock-screen__tagline'>함께 배우고, 함께 만드는 공간</p>
         <form className='lock-screen__form' onSubmit={handleLogin} noValidate>
           <label className='lock-screen__sr-only' htmlFor='lock-screen-id'>
             아이디
@@ -152,13 +159,6 @@ function LockScreen({ onLogin }: LockScreenProps) {
           </p>
         </form>
       </section>
-      <footer className='lock-screen__footer'>
-        <svg viewBox='0 0 24 24' fill='none' aria-hidden='true'>
-          <rect x='6' y='10' width='12' height='10' rx='3' />
-          <path d='M8 10V7a4 4 0 0 1 8 0v3m-4 4v2' />
-        </svg>
-        <span>오늘의 이야기가 시작되는 곳, ALOC</span>
-      </footer>
     </main>
   )
 }

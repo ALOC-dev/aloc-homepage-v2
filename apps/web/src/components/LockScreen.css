@@ -27,36 +27,10 @@
   letter-spacing: 0.02em;
 }
 .lock-screen__orb {
-  position: relative;
   display: block;
   width: 27px;
   height: 27px;
-  overflow: hidden;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse at 32% 16%, #f0fbff 0% 22%, transparent 24%),
-    conic-gradient(
-      from 210deg,
-      #3692ed,
-      #4bd4d7,
-      #edf8ff,
-      #ffc950,
-      #ff996b,
-      #b36bcd,
-      #6262c9,
-      #3692ed
-    );
-  box-shadow:
-    inset -3px -4px 6px #40348b45,
-    0 2px 5px #53447620;
-}
-.lock-screen__orb::after {
-  position: absolute;
-  inset: 20% -12% 24%;
-  border-bottom: 4px solid #fff7;
-  border-radius: 50%;
-  content: '';
-  transform: rotate(-17deg);
+  object-fit: contain;
 }
 .lock-screen__status {
   display: flex;
@@ -99,13 +73,14 @@
   width: min(300px, calc(100vw - 48px));
   flex-direction: column;
   align-items: center;
-  margin-top: max(228px, calc(50svh - 45px));
+  margin-top: max(252px, calc(50svh - 21px));
   text-align: center;
+  padding-bottom: 40px;
 }
 .lock-screen__avatar {
   display: grid;
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   margin-top: 12px;
   place-items: center;
   border: 1px solid #fff8;
@@ -122,17 +97,10 @@
 }
 .lock-screen__login h1 {
   margin: 16px 0 0;
-  font-size: 24px;
-  line-height: 32px;
+  font-size: 20px;
+  line-height: 28px;
   font-weight: 650;
   letter-spacing: 0.02em;
-}
-.lock-screen__tagline {
-  order: 1;
-  margin: 12px 0 0;
-  color: #ffffffe0;
-  font-size: 13px;
-  letter-spacing: -0.025em;
 }
 .lock-screen__form {
   display: flex;
@@ -230,19 +198,6 @@
   color: #fff0eb;
   font-size: 12px;
   line-height: 18px;
-}
-.lock-screen__footer {
-  display: flex;
-  margin-top: auto;
-  padding: 28px 16px 27px;
-  align-items: center;
-  gap: 7px;
-  color: #ffffffb8;
-  font-size: 11px;
-}
-.lock-screen__footer svg {
-  width: 14px;
-  height: 14px;
 }
 .lock-screen__sr-only {
   position: absolute;
