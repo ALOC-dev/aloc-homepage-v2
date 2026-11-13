@@ -1,17 +1,20 @@
-import cors from 'cors'
-import 'dotenv/config'
-import express from 'express'
+import { createApp } from './app.js'
+import { env } from './config/env.js'
+import { prisma } from './db/prisma.js'
 
-const app = express()
-const port = process.env.PORT ?? 4000
+const app = createApp()
 
-app.use(cors())
-app.use(express.json())
-
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' })
+const server = app.listen(env.PORT, () => {
+  console.log(
+    `Server listening on http://localhost:${env.PORT}${env.API_PREFIX}`,
+  )
 })
 
-app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`)
-})
+const shutdown = () => {
+  server.close(() => {
+    prisma.$disconnect().finally(() => process.exit(0))
+  })
+}
+
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)
