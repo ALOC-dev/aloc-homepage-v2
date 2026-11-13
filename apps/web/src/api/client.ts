@@ -92,8 +92,13 @@ export const refreshAccessToken = (): Promise<AuthTokenResponse> => {
 // ───────────── 인터셉터 ─────────────
 
 http.interceptors.request.use((config) => {
+  // 로그인은 새로 신원을 확인하는 요청이라 기존 토큰을 붙이지 않는다.
+  // 붙이면 이전 계정이 비밀번호 변경 전 상태일 때 서버가 로그인 자체를 403으로 막아
+  // 같은 브라우저에서 다른 계정으로 로그인할 수 없게 된다.
   const token = getAccessToken()
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  if (token && !config.url?.startsWith('/auth/login')) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
   return config
 })
 
