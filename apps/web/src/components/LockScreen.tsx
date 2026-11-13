@@ -1,10 +1,9 @@
+import { useAuth, isApiError } from '../api'
 import { useEffect, useState } from 'react'
 import './LockScreen.css'
 import './Wallpaper.css'
 
-type LockScreenProps = { onLogin: () => void }
-
-function LockScreen({ onLogin }: LockScreenProps) {
+function LockScreen() {
   const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -12,12 +11,15 @@ function LockScreen({ onLogin }: LockScreenProps) {
   const [submitted, setSubmitted] = useState(false)
   const [now, setNow] = useState(() => new Date())
 
+  const { login } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 1000)
     return () => window.clearInterval(timer)
   }, [])
 
-  function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
+  async function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     setSubmitted(true)
     if (!loginId.trim() || !password.trim()) {
@@ -31,8 +33,31 @@ function LockScreen({ onLogin }: LockScreenProps) {
       return
     }
     setError('')
-    // UI-only success. API authentication will be connected separately.
-    onLogin()
+    setIsSubmitting(true)
+    try {
+      const result = await login(loginId.trim(), password)
+      if (result.mustChangePassword) {
+        setError('첫 로그인입니다. 비밀번호 변경이 필요해요.')
+        return
+      }
+      // 성공하면 로그인 상태가 바뀌면서 App이 자동으로 데스크톱을 보여준다
+    } catch (err) {
+      if (!isApiError(err)) {
+        setError('알 수 없는 오류가 발생했어요.')
+        return
+      }
+      if (err.code === 'INVALID_CREDENTIALS') {
+        setError('아이디 또는 비밀번호가 올바르지 않아요.')
+      } else if (err.code === 'TOO_MANY_REQUESTS') {
+        setError('로그인 시도가 너무 많아요. 잠시 후 다시 시도해 주세요.')
+      } else if (err.code === 'NETWORK_ERROR') {
+        setError('서버에 연결할 수 없어요.')
+      } else {
+        setError(err.message)
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const date = now.toLocaleDateString('ko-KR', {
@@ -151,8 +176,12 @@ function LockScreen({ onLogin }: LockScreenProps) {
               </svg>
             </button>
           </div>
-          <button type='submit' className='lock-screen__submit'>
-            로그인
+          <button
+            type='submit'
+            className='lock-screen__submit'
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? '로그인 중…' : '로그인'}
           </button>
           <p id='lock-screen-error' className='lock-screen__error' role='alert'>
             {error}
