@@ -105,8 +105,10 @@ describe('파일', () => {
     expect(detail.body.data.links).toHaveLength(1)
 
     const stored = (await prisma.file.findFirstOrThrow()).storedName
+    await createUser({ loginId: 'admin', role: 'ADMIN' })
+    const admin = await login('admin')
     expect(
-      (await api().delete(`/materials/${id}`).set(bearer(t.accessToken)))
+      (await api().delete(`/materials/${id}`).set(bearer(admin.accessToken)))
         .status,
     ).toBe(204)
     expect(existsSync(path.join(UPLOAD_DIR, stored))).toBe(false)
