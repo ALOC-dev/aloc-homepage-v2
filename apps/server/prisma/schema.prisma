@@ -41,6 +41,8 @@ model User {
   name               String
   /// 자기소개. 이메일은 별도 필드 없이 본인이 원하면 여기에 적음
   bio                String    @default("") @db.VarChar(1000)
+  githubUrl          String?   @db.VarChar(2000)
+  discordUrl         String?   @db.VarChar(2000)
   photoFileId        Int?      @unique
   photoFile          File?     @relation("UserPhoto", fields: [photoFileId], references: [id], onDelete: SetNull)
   createdAt          DateTime  @default(now())
@@ -49,6 +51,7 @@ model User {
   deletedAt          DateTime?
 
   fields         UserField[]
+  competitions   UserCompetition[]
   refreshTokens  RefreshToken[]
   projectMembers ProjectMember[]
   projects       Project[]       @relation("ProjectCreator")
@@ -73,6 +76,17 @@ model UserField {
   field   Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   @@id([userId, fieldId])
+}
+
+model UserCompetition {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String   @db.VarChar(200)
+  sortOrder Int
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model RefreshToken {
