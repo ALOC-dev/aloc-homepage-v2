@@ -2,21 +2,27 @@ import {
   Briefcase,
   Code2,
   FlaskConical,
-  FolderGit2,
+  // FolderGit2, // TODO(BE): projects 필드 생기면 주석 해제
   Info,
   Landmark,
   PanelLeft,
   Plus,
   Search,
-  Trophy,
+  // Trophy, // TODO(BE): competitions 필드 생기면 주석 해제
   Users,
   Waves,
   type LucideIcon,
 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
-import { PROFILE_GENERATIONS, type ProfilePerson } from '../profileData'
+import {
+  useAuthImage,
+  useMember,
+  useMembers,
+  type MemberSummary,
+} from '../api'
 import TrafficLights from './TrafficLights'
 
+/* TODO(BE): githubUrl, discordUrl 필드 생기면 주석 해제
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg viewBox='0 0 24 24' className={className} fill='currentColor'>
@@ -32,6 +38,7 @@ function DiscordIcon({ className }: { className?: string }) {
     </svg>
   )
 }
+*/
 
 const AVATAR_COLORS = [
   'bg-[#0A84FF]',
@@ -48,37 +55,38 @@ const JOB_FIELDS: {
   label: string
   count: number
 }[] = [
-  {
-    id: 'developer',
-    icon: Code2,
-    color: 'bg-[#0A84FF]',
-    label: '개발자',
-    count: 0,
-  },
-  {
-    id: 'research',
-    icon: FlaskConical,
-    color: 'bg-[#BF5AF2]',
-    label: '연구실',
-    count: 0,
-  },
-  {
-    id: 'public',
-    icon: Landmark,
-    color: 'bg-[#FF9F0A]',
-    label: '공기업',
-    count: 0,
-  },
-  {
-    id: 'it-etc',
-    icon: Briefcase,
-    color: 'bg-[#34C759]',
-    label: 'IT외직군',
-    count: 0,
-  },
-]
+    {
+      id: 'developer',
+      icon: Code2,
+      color: 'bg-[#0A84FF]',
+      label: '개발자',
+      count: 0,
+    },
+    {
+      id: 'research',
+      icon: FlaskConical,
+      color: 'bg-[#BF5AF2]',
+      label: '연구실',
+      count: 0,
+    },
+    {
+      id: 'public',
+      icon: Landmark,
+      color: 'bg-[#FF9F0A]',
+      label: '공기업',
+      count: 0,
+    },
+    {
+      id: 'it-etc',
+      icon: Briefcase,
+      color: 'bg-[#34C759]',
+      label: 'IT외직군',
+      count: 0,
+    },
+  ]
 
-const GENERATION_ORDINALS = ['1st', '2nd', '3rd', '4th', '5th', '6th']
+const ordinal = (n: number) =>
+  n === 1 ? '1st' : n === 2 ? '2nd' : n === 3 ? '3rd' : `${n}th`
 
 export default function ProfileWindow({
   onClose,
@@ -91,57 +99,56 @@ export default function ProfileWindow({
   onToggleMaximize: () => void
   maximized: boolean
 }) {
-  const allPeople = PROFILE_GENERATIONS.flatMap((gen) => gen.people)
-  const [selectedId, setSelectedId] = useState<string | null>(
-    () => allPeople[0]?.id ?? null,
-  )
+  const { data: members = [], isPending, isError } = useMembers()
+  const [selectedId, setSelectedId] = useState<number | null>(null)
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(
     () => typeof window !== 'undefined' && window.innerWidth >= 640,
   )
   const [query, setQuery] = useState('')
-
-  const selected = allPeople.find((p) => p.id === selectedId)
-
-  const generationGroups = PROFILE_GENERATIONS.toReversed()
+  const currentId = selectedId ?? members[0]?.userId ?? null
+  const { data: selected } = useMember(currentId ?? undefined)
+  const generations = [...new Set(members.map((m) => m.generation ?? 0))].sort(
+    (a, b) => b - a,
+  )
 
   function handleSelectGroup(id: string) {
     setSelectedGroup((prev) => (prev === id ? null : id))
   }
 
-  const selectedGeneration = selectedGroup
-    ? PROFILE_GENERATIONS.find((gen) => gen.id === selectedGroup)
-    : undefined
-  const isJobFieldSelected = selectedGroup !== null && !selectedGeneration
+  const selectedGeneration = selectedGroup?.startsWith('gen-')
+    ? Number(selectedGroup.slice(4))
+    : null
 
-  const scopedPeople = selectedGeneration
-    ? selectedGeneration.people
-    : isJobFieldSelected
-      ? []
-      : allPeople
+  const isJobFieldSelected = selectedGroup !== null && selectedGeneration === null
+
+  const scopedPeople =
+    selectedGeneration !== null
+      ? members.filter((m) => (m.generation ?? 0) === selectedGeneration)
+      : isJobFieldSelected
+        ? []
+        : members
 
   const filteredPeople = scopedPeople.filter((p) =>
-    `${p.generation}_${p.name}`
+    `${p.generation ?? 0}기_${p.name}`
       .toLowerCase()
       .includes(query.trim().toLowerCase()),
   )
 
-  const displayGroups: { label: string; people: ProfilePerson[] }[] = []
-  for (const gen of generationGroups) {
-    const people = filteredPeople.filter((p) => p.generation === gen.label)
-    if (people.length > 0) {
-      displayGroups.push({ label: gen.label, people })
-    }
-  }
+  const displayGroups: { label: string; people: MemberSummary[] }[] = generations
+    .map((g) => ({
+      label: `${g}기`,
+      people: filteredPeople.filter((p) => (p.generation ?? 0) === g),
+    }))
+    .filter((group) => group.people.length > 0)
 
   return (
     <section
       aria-label='개인 프로필'
-      className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)] transition-[height,max-width] duration-300 ease-out ${
-        maximized
-          ? 'h-[min(900px,90vh)] max-w-[1400px]'
-          : 'h-[min(600px,80vh)] max-w-4xl'
-      }`}
+      className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_40px_80px_-24px_rgba(28,27,41,0.6)] transition-[height,max-width] duration-300 ease-out ${maximized
+        ? 'h-[min(900px,90vh)] max-w-[1400px]'
+        : 'h-[min(600px,80vh)] max-w-4xl'
+        }`}
     >
       <header className='flex items-center gap-3 border-b border-black/5 px-4 py-2.5'>
         <TrafficLights
@@ -161,9 +168,8 @@ export default function ProfileWindow({
 
         <div
           data-drag-handle
-          className={`min-w-0 flex-1 touch-none py-1 select-none ${
-            maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
-          }`}
+          className={`min-w-0 flex-1 touch-none py-1 select-none ${maximized ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'
+            }`}
         >
           <p className='truncate font-display text-sm font-semibold text-ink'>
             개인 프로필
@@ -203,22 +209,20 @@ export default function ProfileWindow({
                 Cohort
               </p>
               <ul className='mt-1 flex flex-col gap-0.5'>
-                {generationGroups.map((gen) => {
-                  const genNumber = PROFILE_GENERATIONS.indexOf(gen) + 1
-                  return (
-                    <GroupRow
-                      key={gen.id}
-                      item={{
-                        icon: Users,
-                        color: 'bg-[#0A84FF]',
-                        label: GENERATION_ORDINALS[genNumber - 1] ?? gen.label,
-                        count: gen.people.length,
-                      }}
-                      active={selectedGroup === gen.id}
-                      onClick={() => handleSelectGroup(gen.id)}
-                    />
-                  )
-                })}
+                {generations.map((g) => (
+                  <GroupRow
+                    key={g}
+                    item={{
+                      icon: Users,
+                      color: 'bg-[#0A84FF]',
+                      label: ordinal(g),
+                      count: members.filter((m) => (m.generation ?? 0) === g)
+                        .length,
+                    }}
+                    active={selectedGroup === `gen-${g}`}
+                    onClick={() => handleSelectGroup(`gen-${g}`)}
+                  />
+                ))}
               </ul>
             </div>
 
@@ -235,7 +239,13 @@ export default function ProfileWindow({
 
         {sidebarOpen && (
           <nav className='flex w-44 shrink-0 flex-col gap-0.5 overflow-y-auto border-r border-black/5 px-2 py-3 sm:w-48'>
-            {displayGroups.length === 0 ? (
+            {isPending ? (
+              <p className='px-2 text-[13px] text-muted'>불러오는 중…</p>
+            ) : isError ? (
+              <p className='px-2 text-[13px] text-muted'>
+                멤버를 불러오지 못했어요.
+              </p>
+            ) : displayGroups.length === 0 ? (
               <p className='px-2 text-[13px] text-muted'>
                 {query.trim()
                   ? '검색 결과가 없어요.'
@@ -251,31 +261,23 @@ export default function ProfileWindow({
                   </p>
                   <ul className='mt-0.5 flex flex-col gap-0.5'>
                     {group.people.map((person) => {
-                      const isSelected = selectedId === person.id
+                      const isSelected = currentId === person.userId
                       return (
-                        <li key={person.id}>
+                        <li key={person.userId}>
                           <button
                             type='button'
-                            onClick={() => setSelectedId(person.id)}
-                            className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
-                              isSelected
-                                ? 'bg-black/[0.06] text-ink'
-                                : 'text-ink hover:bg-black/5'
-                            }`}
-                          >
-                            <span
-                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-display text-[11px] font-semibold text-white ${
-                                AVATAR_COLORS[
-                                  allPeople.findIndex(
-                                    (p) => p.id === person.id,
-                                  ) % AVATAR_COLORS.length
-                                ]
+                            onClick={() => setSelectedId(person.userId)}
+                            className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${isSelected
+                              ? 'bg-black/[0.06] text-ink'
+                              : 'text-ink hover:bg-black/5'
                               }`}
-                            >
-                              {person.name.slice(0, 1)}
-                            </span>
+                          >
+                            <Avatar
+                              member={person}
+                              className='h-6 w-6 text-[11px]'
+                            />
                             <span className='truncate'>
-                              {person.generation}_{person.name}
+                              {person.generation ?? 0}기_{person.name}
                             </span>
                           </button>
                         </li>
@@ -292,26 +294,18 @@ export default function ProfileWindow({
           {selected ? (
             <div className='mx-auto flex max-w-xl flex-col gap-6'>
               <div className='flex items-center gap-5'>
-                <div
-                  className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-full font-display text-4xl font-semibold text-white ${
-                    AVATAR_COLORS[
-                      allPeople.findIndex((p) => p.id === selected.id) %
-                        AVATAR_COLORS.length
-                    ]
-                  }`}
-                >
-                  {selected.name.slice(0, 1)}
-                </div>
+                <Avatar member={selected} className='h-24 w-24 text-4xl' />
                 <div className='flex flex-col gap-3'>
                   <div>
                     <h2 className='font-display text-2xl font-bold text-ink'>
                       {selected.name}
                     </h2>
                     <p className='text-sm text-muted'>
-                      ALOC {selected.generation}
+                      ALOC {selected.generation ?? 0}기
                     </p>
                   </div>
 
+                  {/* TODO(BE): 서버 MemberDetail에 githubUrl, discordUrl 필드가 생기면 주석 해제
                   <div className='flex items-center gap-3'>
                     {selected.githubUrl ? (
                       <a
@@ -351,14 +345,16 @@ export default function ProfileWindow({
                       </span>
                     )}
                   </div>
+                  */}
                 </div>
               </div>
 
               <div className='flex flex-col divide-y divide-black/5 border-t border-black/5'>
                 <InfoRow icon={Info} label='소개'>
-                  {selected.bio ?? '아직 소개가 없어요.'}
+                  {selected.bio || '아직 소개가 없어요.'}
                 </InfoRow>
 
+                {/* TODO(BE): 서버 MemberDetail에 projects, competitions 필드가 생기면 주석 해제
                 <InfoRow icon={FolderGit2} label='지난 프로젝트'>
                   {selected.projects && selected.projects.length > 0 ? (
                     <div className='flex flex-wrap gap-1.5'>
@@ -392,6 +388,7 @@ export default function ProfileWindow({
                     '참가한 대회가 아직 없어요.'
                   )}
                 </InfoRow>
+                */}
               </div>
             </div>
           ) : (
@@ -426,9 +423,8 @@ function GroupRow({
       <button
         type='button'
         onClick={onClick}
-        className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${
-          active ? 'bg-black/[0.06] text-ink' : 'text-ink hover:bg-black/5'
-        }`}
+        className={`flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[13px] transition-colors ${active ? 'bg-black/[0.06] text-ink' : 'text-ink hover:bg-black/5'
+          }`}
       >
         <span
           className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${item.color}`}
@@ -440,6 +436,37 @@ function GroupRow({
         <span className='shrink-0 text-[11px] text-muted'>{item.count}</span>
       </button>
     </li>
+  )
+}
+
+/** 프로필 사진. 사진이 없거나 받는 중이면 이름 첫 글자를 색 원에 표시 */
+function Avatar({
+  member,
+  className,
+}: {
+  member: MemberSummary
+  className: string
+}) {
+  // 사진은 로그인이 필요해서 <img src={photoUrl}>로 바로 못 쓰고 토큰을 붙여 받아온다
+  const { src } = useAuthImage(member.photoUrl)
+
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={member.name}
+        className={`shrink-0 rounded-full object-cover ${className}`}
+      />
+    )
+  }
+  return (
+    <span
+      className={`flex shrink-0 items-center justify-center rounded-full font-display font-semibold text-white ${
+        AVATAR_COLORS[member.userId % AVATAR_COLORS.length]
+      } ${className}`}
+    >
+      {member.name.slice(0, 1)}
+    </span>
   )
 }
 
