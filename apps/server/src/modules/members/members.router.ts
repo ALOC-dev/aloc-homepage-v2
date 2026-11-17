@@ -8,7 +8,12 @@ import { getUser, requireAuth, requireRole } from '../../middlewares/auth.js'
 import { upload } from '../../middlewares/upload.js'
 import { createFileRecords, removeStoredFiles } from '../files/files.service.js'
 import { adminUpdateBody, listQuery, updateMeBody } from './members.schema.js'
-import { activeUser, getMember, listMembers } from './members.service.js'
+import {
+  activeUser,
+  getMember,
+  listMembers,
+  profileUpdateData,
+} from './members.service.js'
 
 export const membersRouter = Router()
 
@@ -36,14 +41,17 @@ membersRouter.get(
   }),
 )
 
-// PATCH /members/me — 내 소개 수정
+// PATCH /members/me — 내 프로필 수정 (bio, githubUrl, discordUrl, competitions)
 membersRouter.patch(
   '/members/me',
   requireAuth,
   asyncHandler(async (req, res) => {
     const user = getUser(req)
-    const { bio } = parse(updateMeBody, req.body)
-    await prisma.user.update({ where: { id: user.id }, data: { bio } })
+    const body = parse(updateMeBody, req.body)
+    await prisma.user.update({
+      where: { id: user.id },
+      data: profileUpdateData(body),
+    })
     ok(res, await getMember(user.id))
   }),
 )
@@ -105,7 +113,10 @@ membersRouter.patch(
   requireRole('ADMIN'),
   asyncHandler(async (req, res) => {
     const userId = parseId(req.params.userId)
-    const { fieldIds, ...data } = parse(adminUpdateBody, req.body)
+    const { fieldIds, name, generation, ...profile } = parse(
+      adminUpdateBody,
+      req.body,
+    )
 
     const exists = await prisma.user.findFirst({ where: activeUser(userId) })
     if (!exists) throw notFound('멤버')
@@ -113,7 +124,9 @@ membersRouter.patch(
     await prisma.user.update({
       where: { id: userId },
       data: {
-        ...data,
+        name,
+        generation,
+        ...profileUpdateData(profile),
         ...(fieldIds && {
           fields: {
             deleteMany: {},
