@@ -66,6 +66,69 @@ describe('권한', () => {
     expect(deleted.status).toBe(204)
   })
 
+  it('지식 공유회 자료 수정·삭제는 관리자만 (첨부 파일·링크 삭제 포함)', async () => {
+    await createUser({ loginId: 'u1' })
+    await createUser({ loginId: 'admin', role: 'ADMIN' })
+    const u1 = await login('u1')
+    const admin = await login('admin')
+    const sem = await prisma.semester.create({ data: { name: '2026-2' } })
+
+    const m = await api()
+      .post('/materials')
+      .set(bearer(u1.accessToken))
+      .send({ semesterId: sem.id, title: '세미나 1' })
+    expect(m.status).toBe(201)
+    const id = m.body.data.id
+
+    const l = await api()
+      .post(`/materials/${id}/links`)
+      .set(bearer(u1.accessToken))
+      .send({ url: 'https://github.com/ALOC-dev', title: 'GitHub' })
+    expect(l.status).toBe(201)
+    const f = await api()
+      .post(`/materials/${id}/files`)
+      .set(bearer(u1.accessToken))
+      .attach('files', Buffer.from('%PDF-1.4'), {
+        filename: '발표.pdf',
+        contentType: 'application/pdf',
+      })
+    expect(f.status).toBe(201)
+    const linkId = l.body.data.id
+    const fileId = f.body.data[0].id
+
+    // 일반 유저: 작성자 본인이어도 403
+    const asUser = bearer(u1.accessToken)
+    expect(
+      (await api().patch(`/materials/${id}`).set(asUser).send({ title: 'x' }))
+        .status,
+    ).toBe(403)
+    expect((await api().delete(`/links/${linkId}`).set(asUser)).status).toBe(
+      403,
+    )
+    expect((await api().delete(`/files/${fileId}`).set(asUser)).status).toBe(
+      403,
+    )
+    expect((await api().delete(`/materials/${id}`).set(asUser)).status).toBe(
+      403,
+    )
+
+    // 관리자: 허용
+    const asAdmin = bearer(admin.accessToken)
+    expect(
+      (await api().patch(`/materials/${id}`).set(asAdmin).send({ title: 'y' }))
+        .status,
+    ).toBe(200)
+    expect((await api().delete(`/links/${linkId}`).set(asAdmin)).status).toBe(
+      204,
+    )
+    expect((await api().delete(`/files/${fileId}`).set(asAdmin)).status).toBe(
+      204,
+    )
+    expect((await api().delete(`/materials/${id}`).set(asAdmin)).status).toBe(
+      204,
+    )
+  })
+
   it('관리자는 탈퇴 불가, 유저는 탈퇴 후 로그인 불가', async () => {
     await createUser({ loginId: 'admin', role: 'ADMIN' })
     await createUser({ loginId: 'u1' })

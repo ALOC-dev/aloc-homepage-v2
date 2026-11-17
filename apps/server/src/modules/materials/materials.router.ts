@@ -161,7 +161,7 @@ const getMaterial = async (materialId: number) => {
   }
 }
 
-/** 로그인 멤버 누구나 수정·삭제 가능 (팀 결정). 존재 여부만 확인 */
+/** 존재 여부만 확인. 수정·삭제 권한(관리자)은 라우트의 requireRole에서 검사 */
 const findMaterial = async (materialId: number) => {
   const m = await prisma.material.findUnique({ where: { id: materialId } })
   if (!m) throw notFound('자료')
@@ -188,9 +188,10 @@ materialsRouter.get(
   }),
 )
 
-// PATCH /materials/:materialId — 자료 수정
+// PATCH /materials/:materialId — 자료 수정 (관리자)
 materialsRouter.patch(
   '/materials/:materialId',
+  requireRole('ADMIN'),
   asyncHandler(async (req, res) => {
     const materialId = parseId(req.params.materialId)
     await findMaterial(materialId)
@@ -202,9 +203,10 @@ materialsRouter.patch(
   }),
 )
 
-// DELETE /materials/:materialId — 자료 삭제
+// DELETE /materials/:materialId — 자료 삭제 (관리자)
 materialsRouter.delete(
   '/materials/:materialId',
+  requireRole('ADMIN'),
   asyncHandler(async (req, res) => {
     const materialId = parseId(req.params.materialId)
     await findMaterial(materialId)

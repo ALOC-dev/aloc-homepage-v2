@@ -135,7 +135,7 @@ registry.registerPath({
   method: 'patch',
   path: '/materials/{materialId}',
   tags,
-  summary: '자료 수정',
+  summary: '자료 수정 (관리자)',
   security: auth,
   request: { params: material, body: json(updateBody) },
   responses: {
@@ -150,7 +150,7 @@ registry.registerPath({
   method: 'delete',
   path: '/materials/{materialId}',
   tags,
-  summary: '자료 삭제',
+  summary: '자료 삭제 (관리자)',
   description: '첨부 파일·링크도 함께 삭제됩니다.',
   security: auth,
   request: { params: material },
